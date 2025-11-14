@@ -73,6 +73,19 @@ func LoadConfig() (*Config, error) {
 	return &cfg, nil
 }
 
+// GetConfigDir returns the configuration directory path
+func GetConfigDir() string {
+	configDir := os.Getenv("XDG_CONFIG_HOME")
+	if configDir == "" {
+		home, err := os.UserHomeDir()
+		if err != nil {
+			return filepath.Join(".config", "linesense")
+		}
+		configDir = filepath.Join(home, ".config")
+	}
+	return filepath.Join(configDir, "linesense")
+}
+
 // getConfigPath resolves the full path to a config file
 func getConfigPath(filename string) (string, error) {
 	configDir := os.Getenv("XDG_CONFIG_HOME")

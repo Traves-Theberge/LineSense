@@ -148,6 +148,16 @@ LineSense is an AI-powered shell command autocomplete tool. This document tracks
   - Risk classification accurate
   - Command blocking working
 
+### Phase 2.5: Configuration Management (100% Complete)
+- **Config Command** - User-friendly configuration setup
+  - `config init` - Interactive setup wizard
+  - `config set-key` - Secure API key storage in shell RC files
+  - `config set-model` - Easy model switching
+  - `config show` - Display current configuration with masked API key
+  - Auto-detection of bash/zsh
+  - Proper file permissions (0600) for security
+  - [Implementation](cmd/linesense/main.go)
+
 ## Next Steps 🚀
 
 ### Phase 3: Advanced Features

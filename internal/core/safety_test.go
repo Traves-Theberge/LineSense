@@ -115,6 +115,14 @@ func TestApplySafetyFilters(t *testing.T) {
 	}
 }
 
+func TestIsBlocked_NilConfig(t *testing.T) {
+	// Should not block anything with nil config
+	result := IsBlocked("rm -rf /", nil)
+	if result {
+		t.Error("IsBlocked should return false with nil config")
+	}
+}
+
 func TestValidateCommand(t *testing.T) {
 	tests := []struct {
 		name     string

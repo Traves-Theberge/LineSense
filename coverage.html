@@ -1,0 +1,1314 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>ai: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">github.com/traves/linesense/internal/ai/openrouter.go (10.6%)</option>
+				
+				<option value="file1">github.com/traves/linesense/internal/ai/prompts.go (100.0%)</option>
+				
+				<option value="file2">github.com/traves/linesense/internal/ai/provider.go (100.0%)</option>
+				
+				<option value="file3">github.com/traves/linesense/internal/config/config.go (76.0%)</option>
+				
+				<option value="file4">github.com/traves/linesense/internal/config/providers.go (95.2%)</option>
+				
+				<option value="file5">github.com/traves/linesense/internal/core/context.go (96.8%)</option>
+				
+				<option value="file6">github.com/traves/linesense/internal/core/engine.go (0.0%)</option>
+				
+				<option value="file7">github.com/traves/linesense/internal/core/git.go (94.7%)</option>
+				
+				<option value="file8">github.com/traves/linesense/internal/core/history.go (87.0%)</option>
+				
+				<option value="file9">github.com/traves/linesense/internal/core/safety.go (100.0%)</option>
+				
+				<option value="file10">github.com/traves/linesense/internal/core/usage.go (0.0%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package ai
+
+import (
+        "bytes"
+        "context"
+        "encoding/json"
+        "fmt"
+        "io"
+        "net/http"
+        "os"
+        "strings"
+        "time"
+
+        "github.com/traves/linesense/internal/config"
+        "github.com/traves/linesense/internal/core"
+)
+
+// OpenRouterProvider implements the Provider interface for OpenRouter
+type OpenRouterProvider struct {
+        config  config.OpenRouterConfig
+        profile config.ProfileConfig
+        apiKey  string
+}
+
+// NewOpenRouterProvider creates a new OpenRouter provider
+func NewOpenRouterProvider(cfg config.OpenRouterConfig, profile config.ProfileConfig) (*OpenRouterProvider, error) <span class="cov8" title="1">{
+        // Get API key from environment
+        apiKey := os.Getenv(cfg.APIKeyEnv)
+        if apiKey == "" </span><span class="cov8" title="1">{
+                return nil, fmt.Errorf("API key not found in environment variable %s", cfg.APIKeyEnv)
+        }</span>
+
+        <span class="cov8" title="1">return &amp;OpenRouterProvider{
+                config:  cfg,
+                profile: profile,
+                apiKey:  apiKey,
+        }, nil</span>
+}
+
+// Name returns the provider name
+func (p *OpenRouterProvider) Name() string <span class="cov8" title="1">{
+        return "openrouter"
+}</span>
+
+// Suggest generates command suggestions using OpenRouter
+func (p *OpenRouterProvider) Suggest(ctx context.Context, input core.SuggestInput) ([]core.Suggestion, error) <span class="cov0" title="0">{
+        // Build the prompt
+        systemPrompt := buildSuggestSystemPrompt()
+        userPrompt := buildSuggestUserPrompt(input.Context)
+
+        // Make API request
+        response, err := p.callOpenRouter(ctx, input.ModelID, systemPrompt, userPrompt)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("OpenRouter API call failed: %w", err)
+        }</span>
+
+        // Parse suggestions from response
+        <span class="cov0" title="0">suggestions := parseSuggestions(response, input.Context.Line)
+
+        return suggestions, nil</span>
+}
+
+// Explain generates an explanation using OpenRouter
+func (p *OpenRouterProvider) Explain(ctx context.Context, input core.ExplainInput) (core.Explanation, error) <span class="cov0" title="0">{
+        // Build the prompt
+        systemPrompt := buildExplainSystemPrompt()
+        userPrompt := buildExplainUserPrompt(input.Context)
+
+        // Make API request
+        response, err := p.callOpenRouter(ctx, input.ModelID, systemPrompt, userPrompt)
+        if err != nil </span><span class="cov0" title="0">{
+                return core.Explanation{}, fmt.Errorf("OpenRouter API call failed: %w", err)
+        }</span>
+
+        // Parse explanation from response
+        <span class="cov0" title="0">explanation := parseExplanation(response)
+
+        return explanation, nil</span>
+}
+
+// OpenRouter API types
+type openRouterRequest struct {
+        Model       string                   `json:"model"`
+        Messages    []openRouterMessage      `json:"messages"`
+        Temperature float64                  `json:"temperature,omitempty"`
+        MaxTokens   int                      `json:"max_tokens,omitempty"`
+}
+
+type openRouterMessage struct {
+        Role    string `json:"role"`
+        Content string `json:"content"`
+}
+
+type openRouterResponse struct {
+        Choices []struct {
+                Message struct {
+                        Content string `json:"content"`
+                } `json:"message"`
+        } `json:"choices"`
+        Error *struct {
+                Message string `json:"message"`
+        } `json:"error,omitempty"`
+}
+
+// callOpenRouter makes an API call to OpenRouter
+func (p *OpenRouterProvider) callOpenRouter(ctx context.Context, modelID, systemPrompt, userPrompt string) (string, error) <span class="cov0" title="0">{
+        // Use configured model if not overridden
+        if modelID == "" </span><span class="cov0" title="0">{
+                modelID = p.profile.Model
+        }</span>
+
+        // Build request
+        <span class="cov0" title="0">reqBody := openRouterRequest{
+                Model: modelID,
+                Messages: []openRouterMessage{
+                        {Role: "system", Content: systemPrompt},
+                        {Role: "user", Content: userPrompt},
+                },
+                Temperature: p.profile.Temperature,
+                MaxTokens:   p.profile.MaxTokens,
+        }
+
+        jsonData, err := json.Marshal(reqBody)
+        if err != nil </span><span class="cov0" title="0">{
+                return "", fmt.Errorf("failed to marshal request: %w", err)
+        }</span>
+
+        // Create HTTP request
+        <span class="cov0" title="0">url := fmt.Sprintf("%s/chat/completions", strings.TrimSuffix(p.config.BaseURL, "/"))
+        req, err := http.NewRequestWithContext(ctx, "POST", url, bytes.NewBuffer(jsonData))
+        if err != nil </span><span class="cov0" title="0">{
+                return "", fmt.Errorf("failed to create request: %w", err)
+        }</span>
+
+        <span class="cov0" title="0">req.Header.Set("Content-Type", "application/json")
+        req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", p.apiKey))
+
+        // Set timeout
+        client := &amp;http.Client{
+                Timeout: time.Duration(p.config.TimeoutMs) * time.Millisecond,
+        }
+
+        // Make request
+        resp, err := client.Do(req)
+        if err != nil </span><span class="cov0" title="0">{
+                return "", fmt.Errorf("HTTP request failed: %w", err)
+        }</span>
+        <span class="cov0" title="0">defer resp.Body.Close()
+
+        // Read response
+        body, err := io.ReadAll(resp.Body)
+        if err != nil </span><span class="cov0" title="0">{
+                return "", fmt.Errorf("failed to read response: %w", err)
+        }</span>
+
+        // Parse response
+        <span class="cov0" title="0">var apiResp openRouterResponse
+        if err := json.Unmarshal(body, &amp;apiResp); err != nil </span><span class="cov0" title="0">{
+                return "", fmt.Errorf("failed to parse response: %w", err)
+        }</span>
+
+        // Check for API error
+        <span class="cov0" title="0">if apiResp.Error != nil </span><span class="cov0" title="0">{
+                return "", fmt.Errorf("API error: %s", apiResp.Error.Message)
+        }</span>
+
+        // Extract content
+        <span class="cov0" title="0">if len(apiResp.Choices) == 0 </span><span class="cov0" title="0">{
+                return "", fmt.Errorf("no response choices returned")
+        }</span>
+
+        <span class="cov0" title="0">return apiResp.Choices[0].Message.Content, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package ai
+
+import (
+        "fmt"
+        "strings"
+
+        "github.com/traves/linesense/internal/core"
+)
+
+// buildSuggestSystemPrompt creates the system prompt for command suggestions
+func buildSuggestSystemPrompt() string <span class="cov8" title="1">{
+        return `You are an expert shell command assistant. Your job is to suggest complete, correct shell commands based on the user's partial input and context.
+
+IMPORTANT RULES:
+1. Return ONLY the complete command, nothing else
+2. Make the command safe and appropriate
+3. Use the context (git info, history, cwd) to make intelligent suggestions
+4. If the input is already a complete command, suggest improvements or alternatives
+5. For ambiguous inputs, choose the most common/useful interpretation
+6. Prefer standard Unix/Linux commands
+7. Keep commands concise but complete
+
+RESPONSE FORMAT:
+Return only the command text, no explanations, no markdown, no extra formatting.`
+}</span>
+
+// buildSuggestUserPrompt creates the user prompt with context
+func buildSuggestUserPrompt(ctx *core.ContextEnvelope) string <span class="cov8" title="1">{
+        var parts []string
+
+        // Add the current line (what the user is typing)
+        parts = append(parts, fmt.Sprintf("Current input: %s", ctx.Line))
+
+        // Add shell and working directory
+        parts = append(parts, fmt.Sprintf("\nShell: %s", ctx.Shell))
+        parts = append(parts, fmt.Sprintf("Working directory: %s", ctx.CWD))
+
+        // Add git context if available
+        if ctx.Git != nil &amp;&amp; ctx.Git.IsRepo </span><span class="cov8" title="1">{
+                parts = append(parts, "\nGit context:")
+                parts = append(parts, fmt.Sprintf("- Branch: %s", ctx.Git.Branch))
+                parts = append(parts, fmt.Sprintf("- Status: %s", ctx.Git.StatusSummary))
+                if len(ctx.Git.Remotes) &gt; 0 </span><span class="cov8" title="1">{
+                        parts = append(parts, fmt.Sprintf("- Remotes: %s", strings.Join(ctx.Git.Remotes, ", ")))
+                }</span>
+        }
+
+        // Add recent history if available
+        <span class="cov8" title="1">if len(ctx.History) &gt; 0 </span><span class="cov8" title="1">{
+                parts = append(parts, "\nRecent commands (last 5):")
+                start := len(ctx.History) - 5
+                if start &lt; 0 </span><span class="cov8" title="1">{
+                        start = 0
+                }</span>
+                <span class="cov8" title="1">for _, entry := range ctx.History[start:] </span><span class="cov8" title="1">{
+                        parts = append(parts, fmt.Sprintf("- %s", entry.Command))
+                }</span>
+        }
+
+        <span class="cov8" title="1">parts = append(parts, "\nSuggest the complete command:")
+
+        return strings.Join(parts, "\n")</span>
+}
+
+// buildExplainSystemPrompt creates the system prompt for command explanations
+func buildExplainSystemPrompt() string <span class="cov8" title="1">{
+        return `You are an expert shell command explainer. Your job is to explain what a command does, its risks, and potential side effects.
+
+IMPORTANT RULES:
+1. Be concise but thorough
+2. Explain what the command does in plain English
+3. Identify potential risks (low/medium/high)
+4. Warn about destructive operations
+5. Mention important flags and options
+6. Note common pitfalls or mistakes
+
+RESPONSE FORMAT:
+Summary: [one-sentence explanation]
+Risk: [low|medium|high]
+Details: [detailed explanation]`
+}</span>
+
+// buildExplainUserPrompt creates the user prompt for explanations
+func buildExplainUserPrompt(ctx *core.ContextEnvelope) string <span class="cov8" title="1">{
+        var parts []string
+
+        // Add the command to explain
+        parts = append(parts, fmt.Sprintf("Explain this command: %s", ctx.Line))
+
+        // Add context
+        parts = append(parts, fmt.Sprintf("\nShell: %s", ctx.Shell))
+        parts = append(parts, fmt.Sprintf("Working directory: %s", ctx.CWD))
+
+        // Add git context if relevant
+        if ctx.Git != nil &amp;&amp; ctx.Git.IsRepo </span><span class="cov8" title="1">{
+                parts = append(parts, fmt.Sprintf("\nGit repository: branch=%s, status=%s", ctx.Git.Branch, ctx.Git.StatusSummary))
+        }</span>
+
+        <span class="cov8" title="1">return strings.Join(parts, "\n")</span>
+}
+
+// parseSuggestions extracts command suggestions from AI response
+func parseSuggestions(response string, originalLine string) []core.Suggestion <span class="cov8" title="1">{
+        // Clean up the response
+        command := strings.TrimSpace(response)
+
+        // Remove markdown code blocks if present
+        command = strings.TrimPrefix(command, "```bash")
+        command = strings.TrimPrefix(command, "```sh")
+        command = strings.TrimPrefix(command, "```")
+        command = strings.TrimSuffix(command, "```")
+        command = strings.TrimSpace(command)
+
+        // Take only the first line if multiple lines returned
+        if idx := strings.Index(command, "\n"); idx &gt; 0 </span><span class="cov8" title="1">{
+                command = command[:idx]
+        }</span>
+
+        // If empty, return empty list
+        <span class="cov8" title="1">if command == "" </span><span class="cov8" title="1">{
+                return []core.Suggestion{}
+        }</span>
+
+        // Create suggestion with basic risk assessment
+        <span class="cov8" title="1">risk := assessRisk(command)
+
+        return []core.Suggestion{
+                {
+                        Command:     command,
+                        Risk:        risk,
+                        Explanation: fmt.Sprintf("Suggested based on: %s", originalLine),
+                        Source:      "llm",
+                },
+        }</span>
+}
+
+// parseExplanation extracts explanation from AI response
+func parseExplanation(response string) core.Explanation <span class="cov8" title="1">{
+        lines := strings.Split(response, "\n")
+
+        explanation := core.Explanation{
+                Risk:  core.RiskMedium, // Default
+                Notes: []string{},
+        }
+
+        // Parse structured response
+        for _, line := range lines </span><span class="cov8" title="1">{
+                line = strings.TrimSpace(line)
+                if line == "" </span><span class="cov8" title="1">{
+                        continue</span>
+                }
+
+                <span class="cov8" title="1">if strings.HasPrefix(line, "Summary:") </span><span class="cov8" title="1">{
+                        explanation.Summary = strings.TrimSpace(strings.TrimPrefix(line, "Summary:"))
+                }</span> else<span class="cov8" title="1"> if strings.HasPrefix(line, "Risk:") </span><span class="cov8" title="1">{
+                        riskStr := strings.TrimSpace(strings.TrimPrefix(line, "Risk:"))
+                        switch strings.ToLower(riskStr) </span>{
+                        case "low":<span class="cov8" title="1">
+                                explanation.Risk = core.RiskLow</span>
+                        case "medium":<span class="cov8" title="1">
+                                explanation.Risk = core.RiskMedium</span>
+                        case "high":<span class="cov8" title="1">
+                                explanation.Risk = core.RiskHigh</span>
+                        }
+                } else<span class="cov8" title="1"> if strings.HasPrefix(line, "Details:") </span><span class="cov8" title="1">{
+                        explanation.Notes = append(explanation.Notes, strings.TrimSpace(strings.TrimPrefix(line, "Details:")))
+                }</span> else<span class="cov8" title="1"> if !strings.HasPrefix(line, "Summary:") &amp;&amp; !strings.HasPrefix(line, "Risk:") </span><span class="cov8" title="1">{
+                        // Add other non-empty lines as notes
+                        explanation.Notes = append(explanation.Notes, line)
+                }</span>
+        }
+
+        // If no summary was parsed, use the full response
+        <span class="cov8" title="1">if explanation.Summary == "" </span><span class="cov8" title="1">{
+                explanation.Summary = strings.TrimSpace(response)
+        }</span>
+
+        <span class="cov8" title="1">return explanation</span>
+}
+
+// assessRisk performs basic risk assessment on a command
+func assessRisk(command string) core.RiskLevel <span class="cov8" title="1">{
+        commandLower := strings.ToLower(command)
+
+        // High risk patterns
+        highRiskPatterns := []string{
+                "rm -rf", "dd if=", "mkfs", "&gt; /dev/", "rm /",
+                "chmod 777", "chown -R", "sudo rm",
+        }
+        for _, pattern := range highRiskPatterns </span><span class="cov8" title="1">{
+                if strings.Contains(commandLower, pattern) </span><span class="cov8" title="1">{
+                        return core.RiskHigh
+                }</span>
+        }
+
+        // Medium risk patterns
+        <span class="cov8" title="1">mediumRiskPatterns := []string{
+                "sudo", "rm ", "mv ", "chmod", "chown",
+                "kill", "pkill", "systemctl stop",
+        }
+        for _, pattern := range mediumRiskPatterns </span><span class="cov8" title="1">{
+                if strings.Contains(commandLower, pattern) </span><span class="cov8" title="1">{
+                        return core.RiskMedium
+                }</span>
+        }
+
+        // Default to low risk
+        <span class="cov8" title="1">return core.RiskLow</span>
+}
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package ai
+
+import (
+        "fmt"
+
+        "github.com/traves/linesense/internal/config"
+        "github.com/traves/linesense/internal/core"
+)
+
+// NewProvider creates a provider instance based on configuration
+func NewProvider(cfg *config.ProvidersConfig, profileName string) (core.Provider, error) <span class="cov8" title="1">{
+        // Get the profile configuration
+        profile, err := cfg.GetProfile(profileName)
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, fmt.Errorf("failed to get profile %q: %w", profileName, err)
+        }</span>
+
+        // Currently only OpenRouter is supported
+        // Future: Add support for other providers (Anthropic, OpenAI direct, etc.)
+        <span class="cov8" title="1">switch profile.Provider </span>{
+        case "openrouter", "":<span class="cov8" title="1">
+                return NewOpenRouterProvider(cfg.OpenRouter, *profile)</span>
+        default:<span class="cov8" title="1">
+                return nil, fmt.Errorf("unsupported provider: %s", profile.Provider)</span>
+        }
+}
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package config
+
+import (
+        "fmt"
+        "os"
+        "path/filepath"
+
+        "github.com/BurntSushi/toml"
+)
+
+// Config represents the global configuration from ~/.config/linesense/config.toml
+type Config struct {
+        Shell       ShellConfig       `toml:"shell"`
+        Keybindings KeybindingsConfig `toml:"keybindings"`
+        Context     ContextConfig     `toml:"context"`
+        Safety      SafetyConfig      `toml:"safety"`
+        AI          AIConfig          `toml:"ai"`
+}
+
+// ShellConfig controls which shells are enabled
+type ShellConfig struct {
+        EnableBash bool `toml:"enable_bash"`
+        EnableZsh  bool `toml:"enable_zsh"`
+}
+
+// KeybindingsConfig defines keybindings for shell actions
+type KeybindingsConfig struct {
+        Suggest      string `toml:"suggest"`      // e.g. "ctrl+space"
+        Explain      string `toml:"explain"`      // e.g. "ctrl+e"
+        Alternatives string `toml:"alternatives"` // e.g. "alt+a"
+}
+
+// ContextConfig controls what context is gathered
+type ContextConfig struct {
+        HistoryLength int  `toml:"history_length"` // how many recent commands to use
+        IncludeGit    bool `toml:"include_git"`
+        IncludeFiles  bool `toml:"include_files"`
+        IncludeEnv    bool `toml:"include_env"`
+}
+
+// SafetyConfig defines safety rules
+type SafetyConfig struct {
+        RequireConfirmPatterns []string `toml:"require_confirm_patterns"`
+        Denylist               []string `toml:"denylist"`
+        DefaultExecution       string   `toml:"default_execution"` // "paste_only" (v0.1)
+}
+
+// AIConfig controls AI provider settings
+type AIConfig struct {
+        ProviderProfile string `toml:"provider_profile"` // "default" | "fast" | "smart" | etc.
+}
+
+// LoadConfig loads the global config from standard locations
+func LoadConfig() (*Config, error) <span class="cov8" title="1">{
+        configPath, err := getConfigPath("config.toml")
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("failed to resolve config path: %w", err)
+        }</span>
+
+        <span class="cov8" title="1">var cfg Config
+        if _, err := toml.DecodeFile(configPath, &amp;cfg); err != nil </span><span class="cov8" title="1">{
+                return nil, fmt.Errorf("failed to parse config file %s: %w", configPath, err)
+        }</span>
+
+        // Set defaults if not specified
+        <span class="cov8" title="1">if cfg.Context.HistoryLength == 0 </span><span class="cov8" title="1">{
+                cfg.Context.HistoryLength = 100
+        }</span>
+        <span class="cov8" title="1">if cfg.AI.ProviderProfile == "" </span><span class="cov8" title="1">{
+                cfg.AI.ProviderProfile = "default"
+        }</span>
+
+        <span class="cov8" title="1">return &amp;cfg, nil</span>
+}
+
+// GetConfigDir returns the configuration directory path
+func GetConfigDir() string <span class="cov8" title="1">{
+        configDir := os.Getenv("XDG_CONFIG_HOME")
+        if configDir == "" </span><span class="cov8" title="1">{
+                home, err := os.UserHomeDir()
+                if err != nil </span><span class="cov0" title="0">{
+                        return filepath.Join(".config", "linesense")
+                }</span>
+                <span class="cov8" title="1">configDir = filepath.Join(home, ".config")</span>
+        }
+        <span class="cov8" title="1">return filepath.Join(configDir, "linesense")</span>
+}
+
+// getConfigPath resolves the full path to a config file
+func getConfigPath(filename string) (string, error) <span class="cov8" title="1">{
+        configDir := os.Getenv("XDG_CONFIG_HOME")
+        if configDir == "" </span><span class="cov0" title="0">{
+                home, err := os.UserHomeDir()
+                if err != nil </span><span class="cov0" title="0">{
+                        return "", fmt.Errorf("failed to get home directory: %w", err)
+                }</span>
+                <span class="cov0" title="0">configDir = filepath.Join(home, ".config")</span>
+        }
+
+        <span class="cov8" title="1">return filepath.Join(configDir, "linesense", filename), nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file4" style="display: none">package config
+
+import (
+        "fmt"
+
+        "github.com/BurntSushi/toml"
+)
+
+// ProvidersConfig represents ~/.config/linesense/providers.toml
+type ProvidersConfig struct {
+        Default    ProfileConfig            `toml:"default"`
+        Profiles   map[string]ProfileConfig `toml:"profile"`
+        OpenRouter OpenRouterConfig         `toml:"openrouter"`
+}
+
+// ProfileConfig defines a provider profile
+type ProfileConfig struct {
+        Provider    string  `toml:"provider"`    // "openrouter"
+        Model       string  `toml:"model"`       // e.g. "openrouter/openai/gpt-4.1-mini"
+        Temperature float64 `toml:"temperature"`
+        MaxTokens   int     `toml:"max_tokens"`
+}
+
+// OpenRouterConfig contains OpenRouter-specific settings
+type OpenRouterConfig struct {
+        Type       string `toml:"type"`        // "openrouter"
+        APIKeyEnv  string `toml:"api_key_env"` // e.g. "OPENROUTER_API_KEY"
+        BaseURL    string `toml:"base_url"`    // e.g. "https://openrouter.ai/api/v1"
+        TimeoutMs  int    `toml:"timeout_ms"`
+}
+
+// LoadProvidersConfig loads the providers config
+func LoadProvidersConfig() (*ProvidersConfig, error) <span class="cov8" title="1">{
+        configPath, err := getConfigPath("providers.toml")
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("failed to resolve providers config path: %w", err)
+        }</span>
+
+        <span class="cov8" title="1">var cfg ProvidersConfig
+        if _, err := toml.DecodeFile(configPath, &amp;cfg); err != nil </span><span class="cov8" title="1">{
+                return nil, fmt.Errorf("failed to parse providers config file %s: %w", configPath, err)
+        }</span>
+
+        // Set defaults for OpenRouter if not specified
+        <span class="cov8" title="1">if cfg.OpenRouter.Type == "" </span><span class="cov8" title="1">{
+                cfg.OpenRouter.Type = "openrouter"
+        }</span>
+        <span class="cov8" title="1">if cfg.OpenRouter.APIKeyEnv == "" </span><span class="cov8" title="1">{
+                cfg.OpenRouter.APIKeyEnv = "OPENROUTER_API_KEY"
+        }</span>
+        <span class="cov8" title="1">if cfg.OpenRouter.BaseURL == "" </span><span class="cov8" title="1">{
+                cfg.OpenRouter.BaseURL = "https://openrouter.ai/api/v1"
+        }</span>
+        <span class="cov8" title="1">if cfg.OpenRouter.TimeoutMs == 0 </span><span class="cov8" title="1">{
+                cfg.OpenRouter.TimeoutMs = 30000
+        }</span>
+
+        <span class="cov8" title="1">return &amp;cfg, nil</span>
+}
+
+// GetProfile returns the profile configuration for the given profile name
+func (p *ProvidersConfig) GetProfile(profileName string) (*ProfileConfig, error) <span class="cov8" title="1">{
+        if profileName == "" || profileName == "default" </span><span class="cov8" title="1">{
+                return &amp;p.Default, nil
+        }</span>
+
+        <span class="cov8" title="1">profile, ok := p.Profiles[profileName]
+        if !ok </span><span class="cov8" title="1">{
+                return nil, fmt.Errorf("profile %q not found", profileName)
+        }</span>
+
+        <span class="cov8" title="1">return &amp;profile, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file5" style="display: none">package core
+
+import (
+        "os"
+        "strings"
+
+        "github.com/traves/linesense/internal/config"
+)
+
+// ContextEnvelope is collected before each suggestion / explanation
+type ContextEnvelope struct {
+        Shell        string            `json:"shell"`                  // "bash" | "zsh"
+        Line         string            `json:"line"`                   // current input line
+        CWD          string            `json:"cwd"`
+        Git          *GitInfo          `json:"git,omitempty"`
+        Env          map[string]string `json:"env,omitempty"`          // filtered env (if enabled)
+        History      []HistoryEntry    `json:"history,omitempty"`      // last N commands
+        UsageSummary *UsageSummary     `json:"usage_summary,omitempty"`
+}
+
+// GitInfo contains git repository information
+type GitInfo struct {
+        IsRepo        bool     `json:"is_repo"`
+        Branch        string   `json:"branch,omitempty"`
+        StatusSummary string   `json:"status_summary,omitempty"`
+        Remotes       []string `json:"remotes,omitempty"`
+}
+
+// HistoryEntry represents a shell history entry
+type HistoryEntry struct {
+        Command   string  `json:"command"`
+        Timestamp *string `json:"timestamp,omitempty"`
+        ExitCode  *int    `json:"exit_code,omitempty"`
+}
+
+// UsageSummary contains usage pattern information
+type UsageSummary struct {
+        FrequentlyUsedCommands []string `json:"frequently_used_commands"` // top N commands in this cwd
+}
+
+// BuildContext gathers all contextual information
+func BuildContext(shell, line, cwd string, cfg *config.Config) (*ContextEnvelope, error) <span class="cov8" title="1">{
+        ctx := &amp;ContextEnvelope{
+                Shell: shell,
+                Line:  line,
+                CWD:   cwd,
+        }
+
+        // Collect git context if enabled
+        if cfg.Context.IncludeGit </span><span class="cov8" title="1">{
+                gitInfo, err := CollectGitInfo(cwd)
+                if err != nil </span>{<span class="cov0" title="0">
+                        // Log error but don't fail - git info is optional
+                        // TODO: Add logging
+                }</span> else<span class="cov8" title="1"> if gitInfo != nil </span><span class="cov8" title="1">{
+                        ctx.Git = gitInfo
+                }</span>
+        }
+
+        // Collect shell history if enabled
+        <span class="cov8" title="1">if cfg.Context.HistoryLength &gt; 0 </span><span class="cov8" title="1">{
+                history, err := CollectHistory(shell, cfg.Context.HistoryLength)
+                if err != nil </span>{<span class="cov0" title="0">
+                        // Log error but don't fail - history is optional
+                        // TODO: Add logging
+                }</span> else<span class="cov8" title="1"> if len(history) &gt; 0 </span><span class="cov8" title="1">{
+                        ctx.History = history
+                }</span>
+        }
+
+        // Collect environment variables if enabled
+        <span class="cov8" title="1">if cfg.Context.IncludeEnv </span><span class="cov8" title="1">{
+                ctx.Env = collectFilteredEnv()
+        }</span>
+
+        // TODO: Build usage summary from usage log
+        // This will be implemented when usage logging is complete
+
+        <span class="cov8" title="1">return ctx, nil</span>
+}
+
+// collectFilteredEnv returns a filtered map of environment variables
+// Filters out sensitive variables like API keys and passwords
+func collectFilteredEnv() map[string]string <span class="cov8" title="1">{
+        // List of environment variable patterns to exclude (case-insensitive)
+        sensitivePatterns := []string{
+                "KEY", "SECRET", "PASSWORD", "PASS", "TOKEN", "AUTH",
+                "CREDENTIAL", "PRIVATE", "API_KEY",
+        }
+
+        env := make(map[string]string)
+        for _, e := range os.Environ() </span><span class="cov8" title="1">{
+                pair := strings.SplitN(e, "=", 2)
+                if len(pair) != 2 </span><span class="cov0" title="0">{
+                        continue</span>
+                }
+
+                <span class="cov8" title="1">key := pair[0]
+                value := pair[1]
+
+                // Check if key contains sensitive patterns
+                keyUpper := strings.ToUpper(key)
+                sensitive := false
+                for _, pattern := range sensitivePatterns </span><span class="cov8" title="1">{
+                        if strings.Contains(keyUpper, pattern) </span><span class="cov8" title="1">{
+                                sensitive = true
+                                break</span>
+                        }
+                }
+
+                <span class="cov8" title="1">if !sensitive </span><span class="cov8" title="1">{
+                        env[key] = value
+                }</span>
+        }
+
+        <span class="cov8" title="1">return env</span>
+}
+</pre>
+		
+		<pre class="file" id="file6" style="display: none">package core
+
+import (
+        "context"
+
+        "github.com/traves/linesense/internal/config"
+)
+
+// Suggestion represents a suggested command
+type Suggestion struct {
+        Command     string    `json:"command"`
+        Risk        RiskLevel `json:"risk"`        // "low" | "medium" | "high"
+        Explanation string    `json:"explanation"`
+        Source      string    `json:"source"`      // "llm" | "preset"
+}
+
+// Explanation represents an explanation of a command
+type Explanation struct {
+        Summary string    `json:"summary"`
+        Risk    RiskLevel `json:"risk"`
+        Notes   []string  `json:"notes,omitempty"`
+}
+
+// Provider is the interface for AI providers
+type Provider interface {
+        Name() string
+        Suggest(ctx context.Context, input SuggestInput) ([]Suggestion, error)
+        Explain(ctx context.Context, input ExplainInput) (Explanation, error)
+}
+
+// SuggestInput contains input for suggestion generation
+type SuggestInput struct {
+        ModelID string           `json:"model_id"`
+        Prompt  string           `json:"prompt"`
+        Context *ContextEnvelope `json:"context"`
+}
+
+// ExplainInput contains input for command explanation
+type ExplainInput struct {
+        ModelID string           `json:"model_id"`
+        Prompt  string           `json:"prompt"`
+        Context *ContextEnvelope `json:"context"`
+}
+
+// Engine is the main engine for suggestions and explanations
+type Engine struct {
+        config   *config.Config
+        provider Provider
+}
+
+// NewEngine creates a new engine instance
+func NewEngine(cfg *config.Config, provider Provider) *Engine <span class="cov0" title="0">{
+        return &amp;Engine{
+                config:   cfg,
+                provider: provider,
+        }
+}</span>
+
+// Suggest generates command suggestions
+func (e *Engine) Suggest(ctx context.Context, shell, line, cwd string) ([]Suggestion, error) <span class="cov0" title="0">{
+        // TODO: Build context envelope
+        // TODO: Build prompt for suggestions
+        // TODO: Call provider.Suggest
+        // TODO: Apply safety filters
+        // TODO: Return filtered suggestions
+        panic("not implemented")</span>
+}
+
+// Explain generates an explanation for a command
+func (e *Engine) Explain(ctx context.Context, shell, line, cwd string) (Explanation, error) <span class="cov0" title="0">{
+        // TODO: Build context envelope
+        // TODO: Build prompt for explanation
+        // TODO: Call provider.Explain
+        // TODO: Return explanation
+        panic("not implemented")</span>
+}
+</pre>
+		
+		<pre class="file" id="file7" style="display: none">package core
+
+import (
+        "os/exec"
+        "strings"
+)
+
+// CollectGitInfo gathers git repository information from the current directory
+func CollectGitInfo(cwd string) (*GitInfo, error) <span class="cov8" title="1">{
+        // Check if we're in a git repository
+        cmd := exec.Command("git", "rev-parse", "--is-inside-work-tree")
+        cmd.Dir = cwd
+        if err := cmd.Run(); err != nil </span><span class="cov8" title="1">{
+                // Not a git repository, return nil (not an error)
+                return nil, nil
+        }</span>
+
+        <span class="cov8" title="1">info := &amp;GitInfo{
+                IsRepo: true,
+        }
+
+        // Get current branch name
+        if branch, err := gitCommand(cwd, "rev-parse", "--abbrev-ref", "HEAD"); err == nil </span><span class="cov8" title="1">{
+                info.Branch = strings.TrimSpace(branch)
+        }</span>
+
+        // Get status summary
+        <span class="cov8" title="1">if status, err := gitCommand(cwd, "status", "--porcelain"); err == nil </span><span class="cov8" title="1">{
+                info.StatusSummary = summarizeGitStatus(status)
+        }</span>
+
+        // Get remote URLs
+        <span class="cov8" title="1">if remotes, err := gitCommand(cwd, "remote", "-v"); err == nil </span><span class="cov8" title="1">{
+                info.Remotes = parseGitRemotes(remotes)
+        }</span>
+
+        <span class="cov8" title="1">return info, nil</span>
+}
+
+// gitCommand executes a git command and returns its output
+func gitCommand(cwd string, args ...string) (string, error) <span class="cov8" title="1">{
+        cmd := exec.Command("git", args...)
+        cmd.Dir = cwd
+        output, err := cmd.Output()
+        if err != nil </span><span class="cov0" title="0">{
+                return "", err
+        }</span>
+        <span class="cov8" title="1">return string(output), nil</span>
+}
+
+// summarizeGitStatus creates a human-readable summary of git status
+func summarizeGitStatus(porcelain string) string <span class="cov8" title="1">{
+        if strings.TrimSpace(porcelain) == "" </span><span class="cov8" title="1">{
+                return "clean"
+        }</span>
+
+        <span class="cov8" title="1">lines := strings.Split(strings.TrimSpace(porcelain), "\n")
+        modified := 0
+        added := 0
+        deleted := 0
+        untracked := 0
+
+        for _, line := range lines </span><span class="cov8" title="1">{
+                if len(line) &lt; 2 </span><span class="cov0" title="0">{
+                        continue</span>
+                }
+                <span class="cov8" title="1">status := line[0:2]
+                switch </span>{
+                case strings.HasPrefix(status, "??"):<span class="cov8" title="1">
+                        untracked++</span>
+                case strings.HasPrefix(status, "A") || strings.HasPrefix(status, " A"):<span class="cov8" title="1">
+                        added++</span>
+                case strings.HasPrefix(status, "D") || strings.HasPrefix(status, " D"):<span class="cov8" title="1">
+                        deleted++</span>
+                case strings.HasPrefix(status, "M") || strings.HasPrefix(status, " M"):<span class="cov8" title="1">
+                        modified++</span>
+                }
+        }
+
+        <span class="cov8" title="1">var parts []string
+        if modified &gt; 0 </span><span class="cov8" title="1">{
+                parts = append(parts, "modified")
+        }</span>
+        <span class="cov8" title="1">if added &gt; 0 </span><span class="cov8" title="1">{
+                parts = append(parts, "added")
+        }</span>
+        <span class="cov8" title="1">if deleted &gt; 0 </span><span class="cov8" title="1">{
+                parts = append(parts, "deleted")
+        }</span>
+        <span class="cov8" title="1">if untracked &gt; 0 </span><span class="cov8" title="1">{
+                parts = append(parts, "untracked")
+        }</span>
+
+        <span class="cov8" title="1">if len(parts) == 0 </span><span class="cov0" title="0">{
+                return "uncommitted changes"
+        }</span>
+        <span class="cov8" title="1">return strings.Join(parts, ", ")</span>
+}
+
+// parseGitRemotes extracts unique remote URLs from git remote -v output
+func parseGitRemotes(remotesOutput string) []string <span class="cov8" title="1">{
+        lines := strings.Split(strings.TrimSpace(remotesOutput), "\n")
+        seen := make(map[string]bool)
+        var remotes []string
+
+        for _, line := range lines </span><span class="cov8" title="1">{
+                fields := strings.Fields(line)
+                if len(fields) &gt;= 2 </span><span class="cov8" title="1">{
+                        url := fields[1]
+                        if !seen[url] </span><span class="cov8" title="1">{
+                                seen[url] = true
+                                remotes = append(remotes, url)
+                        }</span>
+                }
+        }
+
+        <span class="cov8" title="1">return remotes</span>
+}
+</pre>
+		
+		<pre class="file" id="file8" style="display: none">package core
+
+import (
+        "bufio"
+        "os"
+        "path/filepath"
+        "strings"
+)
+
+// CollectHistory reads recent commands from shell history
+func CollectHistory(shell string, limit int) ([]HistoryEntry, error) <span class="cov8" title="1">{
+        historyPath, err := getHistoryPath(shell)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        // Check if history file exists
+        <span class="cov8" title="1">if _, err := os.Stat(historyPath); os.IsNotExist(err) </span><span class="cov8" title="1">{
+                // No history file, return empty slice (not an error)
+                return []HistoryEntry{}, nil
+        }</span>
+
+        // Read history file
+        <span class="cov8" title="1">file, err := os.Open(historyPath)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">defer file.Close()
+
+        // Read all lines
+        var lines []string
+        scanner := bufio.NewScanner(file)
+        for scanner.Scan() </span><span class="cov8" title="1">{
+                lines = append(lines, scanner.Text())
+        }</span>
+        <span class="cov8" title="1">if err := scanner.Err(); err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        // Get last N lines
+        <span class="cov8" title="1">start := 0
+        if len(lines) &gt; limit </span><span class="cov8" title="1">{
+                start = len(lines) - limit
+        }</span>
+        <span class="cov8" title="1">lines = lines[start:]
+
+        // Parse into HistoryEntry
+        var entries []HistoryEntry
+        for _, line := range lines </span><span class="cov8" title="1">{
+                entry := parseHistoryLine(shell, line)
+                if entry.Command != "" </span><span class="cov8" title="1">{
+                        entries = append(entries, entry)
+                }</span>
+        }
+
+        <span class="cov8" title="1">return entries, nil</span>
+}
+
+// getHistoryPath returns the path to the shell history file
+func getHistoryPath(shell string) (string, error) <span class="cov8" title="1">{
+        // Check HISTFILE environment variable first
+        if histFile := os.Getenv("HISTFILE"); histFile != "" </span><span class="cov8" title="1">{
+                return histFile, nil
+        }</span>
+
+        // Get home directory
+        <span class="cov8" title="1">home, err := os.UserHomeDir()
+        if err != nil </span><span class="cov0" title="0">{
+                return "", err
+        }</span>
+
+        // Default history file locations
+        <span class="cov8" title="1">switch shell </span>{
+        case "bash":<span class="cov8" title="1">
+                return filepath.Join(home, ".bash_history"), nil</span>
+        case "zsh":<span class="cov0" title="0">
+                return filepath.Join(home, ".zsh_history"), nil</span>
+        default:<span class="cov0" title="0">
+                // Default to bash
+                return filepath.Join(home, ".bash_history"), nil</span>
+        }
+}
+
+// parseHistoryLine parses a single history line based on shell type
+func parseHistoryLine(shell string, line string) HistoryEntry <span class="cov8" title="1">{
+        line = strings.TrimSpace(line)
+        if line == "" </span><span class="cov8" title="1">{
+                return HistoryEntry{}
+        }</span>
+
+        <span class="cov8" title="1">switch shell </span>{
+        case "zsh":<span class="cov8" title="1">
+                // Zsh extended history format: ": timestamp:duration;command"
+                if strings.HasPrefix(line, ":") </span><span class="cov8" title="1">{
+                        parts := strings.SplitN(line[1:], ";", 2)
+                        if len(parts) == 2 </span><span class="cov8" title="1">{
+                                command := strings.TrimSpace(parts[1])
+                                return HistoryEntry{Command: command}
+                        }</span>
+                }
+                // Fallthrough to simple format
+                <span class="cov8" title="1">fallthrough</span>
+        case "bash":<span class="cov8" title="1">
+                fallthrough</span>
+        default:<span class="cov8" title="1">
+                // Simple format: just the command
+                return HistoryEntry{Command: line}</span>
+        }
+}
+</pre>
+		
+		<pre class="file" id="file9" style="display: none">package core
+
+import (
+        "regexp"
+        "strings"
+
+        "github.com/traves/linesense/internal/config"
+)
+
+// RiskLevel represents the risk level of a command
+type RiskLevel string
+
+const (
+        RiskLow    RiskLevel = "low"
+        RiskMedium RiskLevel = "medium"
+        RiskHigh   RiskLevel = "high"
+)
+
+// Built-in high-risk patterns (always checked)
+var builtinHighRiskPatterns = []string{
+        `rm\s+-rf\s+/`,         // rm -rf /
+        `dd\s+if=`,             // dd commands
+        `mkfs`,                 // filesystem formatting
+        `&gt;\s*/dev/`,            // writing to device files
+        `chmod\s+777`,          // overly permissive permissions
+        `chmod\s+-R\s+777`,     // recursive 777
+        `curl.*\|\s*bash`,      // curl to bash
+        `wget.*\|\s*sh`,        // wget to shell
+        `:\(\)\{.*\};:`,        // fork bomb (escaped parens and braces)
+        `killall\s+-9`,         // force kill all
+}
+
+// Built-in medium-risk patterns
+var builtinMediumRiskPatterns = []string{
+        `sudo`,          // elevated privileges
+        `rm\s+`,         // file removal
+        `mv\s+`,         // file move
+        `chmod`,         // permission changes
+        `chown`,         // ownership changes
+        `kill`,          // process termination
+        `pkill`,         // process killing
+        `systemctl`,     // system service management
+        `reboot`,        // system reboot
+        `shutdown`,      // system shutdown
+        `iptables`,      // firewall changes
+        `apt-get\s+remove`, // package removal
+        `yum\s+remove`,     // package removal
+}
+
+// ApplySafetyFilters filters and classifies suggestions based on safety rules
+func ApplySafetyFilters(suggestions []Suggestion, cfg *config.SafetyConfig) []Suggestion <span class="cov8" title="1">{
+        var filtered []Suggestion
+
+        for _, suggestion := range suggestions </span><span class="cov8" title="1">{
+                // Check if command is blocked
+                if IsBlocked(suggestion.Command, cfg) </span><span class="cov8" title="1">{
+                        continue</span> // Skip blocked commands
+                }
+
+                // Classify risk for remaining commands
+                <span class="cov8" title="1">risk := ClassifyRisk(suggestion.Command, cfg)
+                suggestion.Risk = risk
+
+                filtered = append(filtered, suggestion)</span>
+        }
+
+        <span class="cov8" title="1">return filtered</span>
+}
+
+// ClassifyRisk determines the risk level of a command
+func ClassifyRisk(command string, cfg *config.SafetyConfig) RiskLevel <span class="cov8" title="1">{
+        commandLower := strings.ToLower(command)
+
+        // Check high-risk patterns first
+        for _, pattern := range builtinHighRiskPatterns </span><span class="cov8" title="1">{
+                if matched, _ := regexp.MatchString(pattern, commandLower); matched </span><span class="cov8" title="1">{
+                        return RiskHigh
+                }</span>
+        }
+
+        // Check config-defined high-risk patterns
+        <span class="cov8" title="1">if cfg != nil </span><span class="cov8" title="1">{
+                for _, pattern := range cfg.RequireConfirmPatterns </span><span class="cov8" title="1">{
+                        if matched, _ := regexp.MatchString(pattern, commandLower); matched </span><span class="cov8" title="1">{
+                                return RiskHigh
+                        }</span>
+                }
+        }
+
+        // Check medium-risk patterns
+        <span class="cov8" title="1">for _, pattern := range builtinMediumRiskPatterns </span><span class="cov8" title="1">{
+                if matched, _ := regexp.MatchString(pattern, commandLower); matched </span><span class="cov8" title="1">{
+                        return RiskMedium
+                }</span>
+        }
+
+        // Default to low risk
+        <span class="cov8" title="1">return RiskLow</span>
+}
+
+// IsBlocked returns true if the command should be blocked entirely
+func IsBlocked(command string, cfg *config.SafetyConfig) bool <span class="cov8" title="1">{
+        if cfg == nil </span><span class="cov8" title="1">{
+                return false
+        }</span>
+
+        <span class="cov8" title="1">commandLower := strings.ToLower(command)
+
+        // Check against denylist patterns
+        for _, pattern := range cfg.Denylist </span><span class="cov8" title="1">{
+                if matched, _ := regexp.MatchString(pattern, commandLower); matched </span><span class="cov8" title="1">{
+                        return true
+                }</span>
+        }
+
+        <span class="cov8" title="1">return false</span>
+}
+
+// ValidateCommand performs additional validation on commands
+func ValidateCommand(command string) error <span class="cov8" title="1">{
+        // Check for empty commands
+        if strings.TrimSpace(command) == "" </span><span class="cov8" title="1">{
+                return nil // Empty is okay, just means no suggestion
+        }</span>
+
+        // Check for suspiciously long commands (potential injection)
+        <span class="cov8" title="1">if len(command) &gt; 10000 </span><span class="cov8" title="1">{
+                return nil // Just ignore, don't error
+        }</span>
+
+        <span class="cov8" title="1">return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file10" style="display: none">package core
+
+import "time"
+
+// UsageEvent represents a single usage log entry
+// Stored at ~/.config/linesense/usage.log
+type UsageEvent struct {
+        Timestamp string `json:"timestamp"` // ISO 8601
+        CWD       string `json:"cwd"`
+        Command   string `json:"command"`
+        Accepted  bool   `json:"accepted"` // whether the user executed it as suggested
+        Source    string `json:"source"`   // "preset" | "llm"
+}
+
+// LogUsage appends a usage event to the usage log
+func LogUsage(event UsageEvent) error <span class="cov0" title="0">{
+        // TODO: Resolve usage log path (~/.config/linesense/usage.log)
+        // TODO: Ensure directory exists
+        // TODO: Append JSON line to usage log
+        panic("not implemented")</span>
+}
+
+// BuildUsageSummary creates a summary of usage patterns for a given cwd
+func BuildUsageSummary(cwd string) (*UsageSummary, error) <span class="cov0" title="0">{
+        // TODO: Read usage log
+        // TODO: Filter events by cwd
+        // TODO: Count command frequency
+        // TODO: Count preset usage
+        // TODO: Return top N frequently used commands
+        // TODO: Return nil if usage log doesn't exist
+        panic("not implemented")</span>
+}
+
+// newTimestamp returns the current time in ISO 8601 format
+func newTimestamp() string <span class="cov0" title="0">{
+        return time.Now().UTC().Format(time.RFC3339)
+}</span>
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>
