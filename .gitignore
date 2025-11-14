@@ -1,0 +1,36 @@
+# Binaries
+linesense
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool
+*.out
+
+# Go workspace file
+go.work
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Config (don't commit actual configs with secrets)
+config.toml
+providers.toml
+usage.log
+
+# Environment variables (contains API keys)
+.env
+.env.local
