@@ -244,15 +244,15 @@ cleanup() {
 
 # Main installation flow
 main() {
+    echo ""
     echo -e "${BLUE}"
-    echo "╔════════════════════════════════════════════════════════════════╗"
-    echo "║                                                                ║"
-    echo "║                 LineSense Installation Script                 ║"
-    echo "║                                                                ║"
-    echo "║        AI-powered shell command suggestions & explanations    ║"
-    echo "║                                                                ║"
-    echo "╚════════════════════════════════════════════════════════════════╝"
-    echo -e "${NC}"
+    cat << "EOF"
+    ▖ ▘    ▄▖
+    ▌ ▌▛▌█▌▚ █▌▛▌▛▘█▌
+    ▙▖▌▌▌▙▖▄▌▙▖▌▌▄▌▙▖
+
+EOF
+    echo -e "    ${GREEN}AI-powered shell command suggestions & explanations${NC}"
     echo ""
 
     # Set trap for cleanup
