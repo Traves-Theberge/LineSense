@@ -118,29 +118,6 @@ release:
     - 🐛 [Report Issues](https://github.com/Traves-Theberge/LineSense/issues)
     - 💬 [Discussions](https://github.com/Traves-Theberge/LineSense/discussions)
 
-# Homebrew tap (disabled - requires HOMEBREW_TAP_GITHUB_TOKEN)
-# brews:
-#   - repository:
-#       owner: traves
-#       name: homebrew-tap
-#       token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
-#     directory: Formula
-#     homepage: https://github.com/Traves-Theberge/LineSense
-#     description: AI-powered shell command suggestions and explanations
-#     license: MIT
-#     test: |
-#       system "#{bin}/linesense --version"
-#     install: |
-      bin.install "linesense"
-
-      # Install shell integration scripts
-      (prefix/"scripts").install "scripts/linesense.bash"
-      (prefix/"scripts").install "scripts/linesense.zsh"
-
-      # Install example configs
-      (prefix/"examples").install Dir["examples/*.toml"]
-    skip_upload: auto
-
 # Docker images (future) - Commented out until Dockerfile is created
 # dockers:
 #   - image_templates:
