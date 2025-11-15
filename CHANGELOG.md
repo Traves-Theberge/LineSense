@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.1] - 2025-11-15
+
+### Security
+- **Improved API Key Storage** 🔒
+  - API keys now stored in `~/.config/linesense/.env` with 0600 permissions (owner read/write only)
+  - Better security than shell RC files: not loaded into every process environment
+  - Protected by file permissions: only the owner can read or write
+  - Keeps API keys separate from version-controlled dotfiles
+  - Automatic migration from legacy shell RC file storage with user warning
+  - `linesense config show` displays storage location and security status
+
+### Changed
+- `linesense config set-key` now stores keys in secure .env file instead of shell RC files
+- API key loading prioritizes secure .env file with automatic fallback to environment variables
+- Updated all documentation to reflect new secure storage location
+
+### Migration
+- Existing users with API keys in shell RC files will see a migration notice
+- Old keys in `.bashrc`/`.zshrc` continue to work (fallback compatibility)
+- Users are prompted to optionally clean up old exports from shell RC files
+- New installations automatically use secure storage
+
 ## [0.5.0] - 2025-11-15
 
 ### Added

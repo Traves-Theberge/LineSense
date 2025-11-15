@@ -135,12 +135,11 @@ mkdir -p ~/.config/linesense
 cp examples/config.toml ~/.config/linesense/
 cp examples/providers.toml ~/.config/linesense/
 
-# 3. Set API key manually
-# Add this to your ~/.bashrc or ~/.zshrc
-echo 'export OPENROUTER_API_KEY="your-api-key-here"' >> ~/.bashrc
+# 3. Set API key (recommended method)
+linesense config set-key your-api-key-here
+# This stores the key securely in ~/.config/linesense/.env with 0600 permissions
 
-# 4. Reload shell
-source ~/.bashrc
+# Note: The key is automatically loaded by LineSense - no shell reload needed for the CLI
 ```
 
 ## Shell Integration
@@ -261,17 +260,20 @@ Open a new terminal or reload your shell, then:
 
 **Solutions:**
 ```bash
-# 1. Check if API key is set
-echo $OPENROUTER_API_KEY
-
-# 2. If empty, set it using config command
+# 1. Set your API key using the config command
 linesense config set-key
+# This stores the key in ~/.config/linesense/.env with secure 0600 permissions
 
-# 3. Reload shell
-source ~/.bashrc  # or ~/.zshrc
-
-# 4. Verify it's set
+# 2. Verify it's set correctly
 linesense config show
+# Should show: API Key: sk-or-v1...xxxx ✓
+
+# 3. Check the .env file exists
+ls -la ~/.config/linesense/.env
+# Should show: -rw------- (0600 permissions)
+
+# 4. Test it works
+linesense suggest --line "list files"
 ```
 
 ### Configuration Files Not Found

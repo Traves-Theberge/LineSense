@@ -15,10 +15,13 @@ import (
 	"github.com/traves/linesense/internal/core"
 )
 
-const version = "0.5.0"
+const version = "0.5.1"
 
 func main() {
-	// Try to load .env file (silently ignore if not present)
+	// Load LineSense .env file from config directory (secure location)
+	loadSecureEnv()
+
+	// Also try to load .env file from current directory (for development)
 	if cwd, err := os.Getwd(); err == nil {
 		_ = godotenv.Load(filepath.Join(cwd, ".env"))
 	}
@@ -27,6 +30,16 @@ func main() {
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 		os.Exit(1)
 	}
+}
+
+// loadSecureEnv loads the API key from ~/.config/linesense/.env
+// Falls back to environment variables if not present
+func loadSecureEnv() {
+	configDir := config.GetConfigDir()
+	envPath := filepath.Join(configDir, ".env")
+
+	// Silently load if exists
+	_ = godotenv.Load(envPath)
 }
 
 func run() error {
@@ -395,15 +408,28 @@ func runConfigSetKey(args []string) error {
 		return fmt.Errorf("API key cannot be empty")
 	}
 
-	// Store in shell profile
-	homeDir, err := os.UserHomeDir()
-	if err != nil {
-		return fmt.Errorf("failed to get home directory: %w", err)
+	// Store in secure .env file
+	configDir := config.GetConfigDir()
+	envPath := filepath.Join(configDir, ".env")
+
+	// Ensure config directory exists with secure permissions
+	if err := os.MkdirAll(configDir, 0700); err != nil {
+		return fmt.Errorf("failed to create config directory: %w", err)
 	}
 
+	// Check if .env file already exists
+	var existingContent []byte
+	var hasExistingKey bool
+
+	if content, err := os.ReadFile(envPath); err == nil {
+		existingContent = content
+		hasExistingKey = strings.Contains(string(content), "OPENROUTER_API_KEY")
+	}
+
+	// Check for legacy shell rc file installations
+	homeDir, _ := os.UserHomeDir()
 	shell := detectShell()
 	var rcFile string
-
 	switch shell {
 	case "zsh":
 		rcFile = filepath.Join(homeDir, ".zshrc")
@@ -413,14 +439,22 @@ func runConfigSetKey(args []string) error {
 		rcFile = filepath.Join(homeDir, ".bashrc")
 	}
 
-	// Check if already set
-	content, err := os.ReadFile(rcFile)
-	if err != nil && !os.IsNotExist(err) {
-		return fmt.Errorf("failed to read %s: %w", rcFile, err)
+	var hasLegacyKey bool
+	if rcContent, err := os.ReadFile(rcFile); err == nil {
+		hasLegacyKey = strings.Contains(string(rcContent), "OPENROUTER_API_KEY")
 	}
 
-	if strings.Contains(string(content), "OPENROUTER_API_KEY") {
-		fmt.Printf("⚠️  OPENROUTER_API_KEY already exists in %s\n", rcFile)
+	// Warn about migration if legacy key exists
+	if hasLegacyKey && !hasExistingKey {
+		fmt.Println("⚠️  MIGRATION NOTICE:")
+		fmt.Printf("   An API key was found in %s\n", rcFile)
+		fmt.Println("   LineSense now stores API keys in a secure file with restricted permissions.")
+		fmt.Printf("   After setup, you can remove the old export from %s\n", rcFile)
+		fmt.Println()
+	}
+
+	if hasExistingKey {
+		fmt.Printf("⚠️  OPENROUTER_API_KEY already exists in %s\n", envPath)
 		fmt.Print("Do you want to update it? (y/N): ")
 		var response string
 		_, _ = fmt.Scanln(&response)
@@ -428,29 +462,44 @@ func runConfigSetKey(args []string) error {
 			return fmt.Errorf("API key setup canceled")
 		}
 
-		// Remove old line
-		lines := strings.Split(string(content), "\n")
+		// Remove old key from .env content
+		lines := strings.Split(string(existingContent), "\n")
 		var newLines []string
 		for _, line := range lines {
-			if !strings.Contains(line, "OPENROUTER_API_KEY") {
+			if !strings.Contains(line, "OPENROUTER_API_KEY") && !strings.Contains(line, "# LineSense OpenRouter API Key") {
 				newLines = append(newLines, line)
 			}
 		}
-		content = []byte(strings.Join(newLines, "\n"))
+		existingContent = []byte(strings.Join(newLines, "\n"))
 	}
 
-	// Append new export
-	exportLine := fmt.Sprintf("\n# LineSense OpenRouter API Key\nexport OPENROUTER_API_KEY=\"%s\"\n", apiKey)
-	content = append(content, []byte(exportLine)...)
+	// Create new .env content
+	var newContent string
+	if len(existingContent) > 0 {
+		newContent = string(existingContent)
+		if !strings.HasSuffix(newContent, "\n") {
+			newContent += "\n"
+		}
+	}
+	newContent += fmt.Sprintf("# LineSense OpenRouter API Key\nOPENROUTER_API_KEY=%s\n", apiKey)
 
-	if err := os.WriteFile(rcFile, content, 0600); err != nil {
-		return fmt.Errorf("failed to write %s: %w", rcFile, err)
+	// Write with secure permissions (0600 = owner read/write only)
+	if err := os.WriteFile(envPath, []byte(newContent), 0600); err != nil {
+		return fmt.Errorf("failed to write %s: %w", envPath, err)
 	}
 
-	fmt.Printf("✓ API key saved to %s\n", rcFile)
+	fmt.Printf("✓ API key saved securely to %s\n", envPath)
+	fmt.Println("  (File permissions: 0600 - owner read/write only)")
 	fmt.Println()
-	fmt.Println("⚠️  IMPORTANT: Reload your shell or run:")
-	fmt.Printf("   source %s\n", rcFile)
+
+	if hasLegacyKey {
+		fmt.Println("📝 Optional cleanup:")
+		fmt.Printf("   You can now remove the old export from %s\n", rcFile)
+		fmt.Println("   Look for lines containing 'OPENROUTER_API_KEY'")
+		fmt.Println()
+	}
+
+	fmt.Println("✓ Setup complete! API key is loaded automatically.")
 
 	return nil
 }
@@ -515,9 +564,20 @@ func runConfigShow() error {
 
 	// Check API key
 	apiKey := os.Getenv("OPENROUTER_API_KEY")
+	envPath := filepath.Join(configDir, ".env")
+
 	if apiKey != "" {
 		masked := apiKey[:8] + "..." + apiKey[len(apiKey)-4:]
-		fmt.Printf("API Key: %s ✓\n", masked)
+
+		// Check source
+		if _, err := os.Stat(envPath); err == nil {
+			fmt.Printf("API Key: %s ✓\n", masked)
+			fmt.Printf("  Location: %s (secure)\n", envPath)
+		} else {
+			fmt.Printf("API Key: %s ✓\n", masked)
+			fmt.Println("  Location: Environment variable (consider migrating to secure storage)")
+			fmt.Println("  Run: linesense config set-key")
+		}
 	} else {
 		fmt.Println("API Key: Not set ❌")
 		fmt.Println("  Set with: linesense config set-key")

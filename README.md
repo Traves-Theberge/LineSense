@@ -329,7 +329,7 @@ linesense config set-model openai/gpt-4o
 linesense config show
 ```
 
-**Security Note:** API keys are stored in your shell RC file (`~/.bashrc` or `~/.zshrc`) as environment variables, not in configuration files. This follows security best practices and keeps your API key out of version control.
+**Security Note:** API keys are stored in `~/.config/linesense/.env` with 0600 permissions (owner read/write only). This provides better security than shell RC files as the file is not loaded into every process environment, is protected by file permissions, and is kept separate from version-controlled dotfiles.
 
 ### Configuration Files
 
@@ -430,10 +430,12 @@ denylist = [
 
 ### API Key Security
 
-- API keys are stored as environment variables in your shell RC file
-- Never stored in configuration files or version control
-- Proper file permissions (0600) automatically set
+- API keys are stored in `~/.config/linesense/.env` with 0600 permissions
+- File is protected: only the owner can read/write (more secure than shell RC files)
+- Not loaded into every process environment (better isolation)
+- Never stored in version control (separate from dotfiles)
 - Keys are masked in `config show` output (e.g., `sk-or-v1...cf28`)
+- Automatic migration from legacy shell RC file storage
 
 ## Development Status
 
@@ -506,11 +508,12 @@ LineSense is **production-ready** with beautiful terminal UI and full shell inte
    - ✅ `linesense config show` - Configuration display
 
 2. **Security Features**
-   - ✅ API keys stored in shell RC files (not config files)
-   - ✅ Proper file permissions (0600)
+   - ✅ API keys stored in `~/.config/linesense/.env` with 0600 permissions
+   - ✅ Secure file isolation (not loaded into all process environments)
    - ✅ API key masking in output
    - ✅ Confirmation prompts before overwriting
    - ✅ Auto-detection of user's shell
+   - ✅ Automatic migration from legacy storage
 
 ### ✅ Phase 2.7: Beautiful UI & UX - **COMPLETE (v0.4.0)**
 
