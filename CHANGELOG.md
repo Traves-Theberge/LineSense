@@ -23,6 +23,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Package installation commands use the correct package manager for your system
   - File operations use OS-appropriate paths and command syntax
   - Native commands preferred (e.g., `open` on macOS vs `xdg-open` on Linux)
+- **Stricter OS-Specific Command Filtering**
+  - Enhanced AI prompts with "CRITICAL RULES" to enforce OS compatibility
+  - AI will ONLY suggest commands that work on your detected OS
+  - Explicit NEVER rules prevent cross-platform command mixing
+  - Better categorization of cross-platform vs OS-specific commands
 
 ### Technical
 - Added OS detection utility in `internal/core/osdetect.go`
@@ -31,6 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New `DetectPackageManager()` function checking for installed package managers
 - Extended `ContextEnvelope` with `OS`, `Distribution`, and `PackageManager` fields
 - Updated AI prompts to include OS context and OS-specific command guidelines
+- Strengthened system prompts with strict OS compatibility rules
 - Comprehensive test suite for OS detection across platforms
 
 ## [0.4.4] - 2025-11-15
