@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - 2025-11-15
+
+### Added
+- **Operating System Aware Suggestions** 🎯
+  - LineSense now detects your operating system (Linux, macOS, Windows)
+  - Detects Linux distribution (Ubuntu, Arch, Fedora, etc.)
+  - Automatically detects your package manager (apt, yum, dnf, pacman, brew, etc.)
+  - AI suggestions are now tailored to your specific OS and package manager
+  - Example: Typing "install nginx" on Ubuntu suggests `sudo apt install nginx`, on macOS suggests `brew install nginx`, on Arch suggests `sudo pacman -S nginx`
+
+### Improved
+- **Smarter Package Management Commands**
+  - No more suggesting apt commands on macOS or brew commands on Linux
+  - Package installation commands use the correct package manager for your system
+  - File operations use OS-appropriate paths and command syntax
+  - Native commands preferred (e.g., `open` on macOS vs `xdg-open` on Linux)
+
+### Technical
+- Added OS detection utility in `internal/core/osdetect.go`
+- New `DetectOS()` function using `runtime.GOOS`
+- New `DetectDistribution()` function parsing `/etc/os-release` on Linux
+- New `DetectPackageManager()` function checking for installed package managers
+- Extended `ContextEnvelope` with `OS`, `Distribution`, and `PackageManager` fields
+- Updated AI prompts to include OS context and OS-specific command guidelines
+- Comprehensive test suite for OS detection across platforms
+
 ## [0.4.4] - 2025-11-15
 
 ### Added

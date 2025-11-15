@@ -9,13 +9,16 @@ import (
 
 // ContextEnvelope is collected before each suggestion / explanation
 type ContextEnvelope struct {
-	Shell        string            `json:"shell"` // "bash" | "zsh"
-	Line         string            `json:"line"`  // current input line
-	CWD          string            `json:"cwd"`
-	Git          *GitInfo          `json:"git,omitempty"`
-	Env          map[string]string `json:"env,omitempty"`     // filtered env (if enabled)
-	History      []HistoryEntry    `json:"history,omitempty"` // last N commands
-	UsageSummary *UsageSummary     `json:"usage_summary,omitempty"`
+	Shell          string            `json:"shell"`           // "bash" | "zsh"
+	Line           string            `json:"line"`            // current input line
+	CWD            string            `json:"cwd"`
+	OS             string            `json:"os"`              // "linux" | "darwin" | "windows"
+	Distribution   string            `json:"distribution,omitempty"` // Linux distro: "ubuntu", "arch", "fedora", etc.
+	PackageManager string            `json:"package_manager,omitempty"` // "apt", "yum", "brew", "pacman", etc.
+	Git            *GitInfo          `json:"git,omitempty"`
+	Env            map[string]string `json:"env,omitempty"`     // filtered env (if enabled)
+	History        []HistoryEntry    `json:"history,omitempty"` // last N commands
+	UsageSummary   *UsageSummary     `json:"usage_summary,omitempty"`
 }
 
 // GitInfo contains git repository information
@@ -41,9 +44,12 @@ type UsageSummary struct {
 // BuildContext gathers all contextual information
 func BuildContext(shell, line, cwd string, cfg *config.Config) (*ContextEnvelope, error) {
 	ctx := &ContextEnvelope{
-		Shell: shell,
-		Line:  line,
-		CWD:   cwd,
+		Shell:          shell,
+		Line:           line,
+		CWD:            cwd,
+		OS:             DetectOS(),
+		Distribution:   DetectDistribution(),
+		PackageManager: DetectPackageManager(),
 	}
 
 	// Collect git context if enabled

@@ -32,9 +32,12 @@ func TestBuildSuggestSystemPrompt(t *testing.T) {
 
 func TestBuildSuggestUserPrompt(t *testing.T) {
 	ctx := &core.ContextEnvelope{
-		Shell: "bash",
-		Line:  "git com",
-		CWD:   "/home/user/project",
+		Shell:          "bash",
+		Line:           "git com",
+		CWD:            "/home/user/project",
+		OS:             "linux",
+		Distribution:   "ubuntu",
+		PackageManager: "apt",
 		Git: &core.GitInfo{
 			IsRepo:        true,
 			Branch:        "main",
@@ -53,6 +56,15 @@ func TestBuildSuggestUserPrompt(t *testing.T) {
 	// Verify all context is included
 	if !strings.Contains(prompt, "git com") {
 		t.Error("Should contain current input")
+	}
+	if !strings.Contains(prompt, "linux") {
+		t.Error("Should contain OS")
+	}
+	if !strings.Contains(prompt, "ubuntu") {
+		t.Error("Should contain distribution")
+	}
+	if !strings.Contains(prompt, "apt") {
+		t.Error("Should contain package manager")
 	}
 	if !strings.Contains(prompt, "bash") {
 		t.Error("Should contain shell")
@@ -73,9 +85,11 @@ func TestBuildSuggestUserPrompt(t *testing.T) {
 
 func TestBuildSuggestUserPrompt_NoGit(t *testing.T) {
 	ctx := &core.ContextEnvelope{
-		Shell: "zsh",
-		Line:  "ls",
-		CWD:   "/tmp",
+		Shell:          "zsh",
+		Line:           "ls",
+		CWD:            "/tmp",
+		OS:             "darwin",
+		PackageManager: "brew",
 	}
 
 	prompt := buildSuggestUserPrompt(ctx)
@@ -117,9 +131,11 @@ func TestBuildExplainSystemPrompt(t *testing.T) {
 
 func TestBuildExplainUserPrompt(t *testing.T) {
 	ctx := &core.ContextEnvelope{
-		Shell: "bash",
-		Line:  "rm -rf /tmp/test",
-		CWD:   "/home/user",
+		Shell:        "bash",
+		Line:         "rm -rf /tmp/test",
+		CWD:          "/home/user",
+		OS:           "linux",
+		Distribution: "arch",
 		Git: &core.GitInfo{
 			IsRepo:        true,
 			Branch:        "develop",
@@ -132,6 +148,12 @@ func TestBuildExplainUserPrompt(t *testing.T) {
 	// Verify command and context
 	if !strings.Contains(prompt, "rm -rf /tmp/test") {
 		t.Error("Should contain command to explain")
+	}
+	if !strings.Contains(prompt, "linux") {
+		t.Error("Should contain OS")
+	}
+	if !strings.Contains(prompt, "arch") {
+		t.Error("Should contain distribution")
 	}
 	if !strings.Contains(prompt, "bash") {
 		t.Error("Should contain shell")

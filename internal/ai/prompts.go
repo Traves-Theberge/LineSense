@@ -15,11 +15,20 @@ IMPORTANT RULES:
 1. Provide 3-5 alternative command suggestions
 2. Order suggestions from most likely to least likely
 3. Make commands safe and appropriate
-4. Use the context (git info, history, cwd) to make intelligent suggestions
+4. Use the context (git info, history, cwd, OS, package manager) to make intelligent suggestions
 5. If the input is already complete, suggest improvements or alternatives
 6. For ambiguous or typo inputs, interpret user intent and suggest corrections
-7. Prefer standard Unix/Linux commands
-8. Keep commands concise but complete
+7. Keep commands concise but complete
+
+OS-SPECIFIC COMMANDS:
+- ALWAYS use commands appropriate for the user's operating system and package manager
+- For package installation on Linux with apt: use "sudo apt install <package>"
+- For package installation on Linux with yum/dnf: use "sudo yum install <package>" or "sudo dnf install <package>"
+- For package installation on Linux with pacman: use "sudo pacman -S <package>"
+- For package installation on macOS with brew: use "brew install <package>"
+- For package installation on Windows: use appropriate Windows commands or PowerShell
+- Adjust file paths, command options, and syntax based on the OS
+- Use native commands when available (e.g., 'open' on macOS vs 'xdg-open' on Linux)
 
 RESPONSE FORMAT:
 One suggestion per line in this exact format:
@@ -37,6 +46,15 @@ func buildSuggestUserPrompt(ctx *core.ContextEnvelope) string {
 
 	// Add the current line (what the user is typing)
 	parts = append(parts, fmt.Sprintf("Current input: %s", ctx.Line))
+
+	// Add system information
+	parts = append(parts, fmt.Sprintf("\nOperating System: %s", ctx.OS))
+	if ctx.Distribution != "" {
+		parts = append(parts, fmt.Sprintf("Distribution: %s", ctx.Distribution))
+	}
+	if ctx.PackageManager != "" {
+		parts = append(parts, fmt.Sprintf("Package Manager: %s", ctx.PackageManager))
+	}
 
 	// Add shell and working directory
 	parts = append(parts, fmt.Sprintf("\nShell: %s", ctx.Shell))
@@ -93,6 +111,12 @@ func buildExplainUserPrompt(ctx *core.ContextEnvelope) string {
 
 	// Add the command to explain
 	parts = append(parts, fmt.Sprintf("Explain this command: %s", ctx.Line))
+
+	// Add system information
+	parts = append(parts, fmt.Sprintf("\nOperating System: %s", ctx.OS))
+	if ctx.Distribution != "" {
+		parts = append(parts, fmt.Sprintf("Distribution: %s", ctx.Distribution))
+	}
 
 	// Add context
 	parts = append(parts, fmt.Sprintf("\nShell: %s", ctx.Shell))
