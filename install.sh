@@ -229,8 +229,8 @@ print_next_steps() {
     echo ""
     echo "  4. Use shell integration (Ctrl+Space for suggestions)"
     echo ""
-    echo "  📚 Documentation: https://github.com/traves/LineSense"
-    echo "  🐛 Report issues: https://github.com/traves/LineSense/issues"
+    echo "  📚 Documentation: https://github.com/Traves-Theberge/LineSense"
+    echo "  🐛 Report issues: https://github.com/Traves-Theberge/LineSense/issues"
     echo ""
 }
 
