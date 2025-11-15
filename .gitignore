@@ -1,5 +1,5 @@
-# Binaries
-linesense
+# Binaries (in root directory only)
+/linesense
 *.exe
 *.exe~
 *.dll
