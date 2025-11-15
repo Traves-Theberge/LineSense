@@ -185,6 +185,20 @@ func TestParseSuggestions(t *testing.T) {
 			wantRisk:     core.RiskLow,
 		},
 		{
+			name:         "command with explanation",
+			response:     "ls -la | List all files with details",
+			originalLine: "ls",
+			wantCommand:  "ls -la",
+			wantRisk:     core.RiskLow,
+		},
+		{
+			name:         "multiple commands with explanations",
+			response:     "git status | Show repository status\ngit diff | Show uncommitted changes\ngit log | Show commit history",
+			originalLine: "git",
+			wantCommand:  "git status", // First suggestion
+			wantRisk:     core.RiskLow,
+		},
+		{
 			name:         "empty response",
 			response:     "",
 			originalLine: "???",
@@ -218,6 +232,44 @@ func TestParseSuggestions(t *testing.T) {
 			}
 			if suggestion.Source != "llm" {
 				t.Errorf("Source = %q, want llm", suggestion.Source)
+			}
+		})
+	}
+}
+
+func TestParseSuggestions_Explanations(t *testing.T) {
+	tests := []struct {
+		name            string
+		response        string
+		wantExplanation string
+	}{
+		{
+			name:            "command with explanation",
+			response:        "ls -la | List all files with details",
+			wantExplanation: "List all files with details",
+		},
+		{
+			name:            "command without explanation",
+			response:        "git status",
+			wantExplanation: "Suggested based on: git", // Default explanation
+		},
+		{
+			name:            "multiple commands with explanations",
+			response:        "git status | Show repository status\ngit diff | Show uncommitted changes",
+			wantExplanation: "Show repository status", // First suggestion
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			suggestions := parseSuggestions(tt.response, "git")
+
+			if len(suggestions) < 1 {
+				t.Fatalf("Expected at least 1 suggestion, got %d", len(suggestions))
+			}
+
+			if suggestions[0].Explanation != tt.wantExplanation {
+				t.Errorf("Explanation = %q, want %q", suggestions[0].Explanation, tt.wantExplanation)
 			}
 		})
 	}

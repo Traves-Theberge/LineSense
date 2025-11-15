@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.4] - 2025-11-15
+
+### Added
+- **Brief Command Explanations**
+  - Each command suggestion now includes a concise 5-10 word explanation
+  - Format: `COMMAND | brief explanation`
+  - Example: `ls -la | List all files with details`
+  - Helps users quickly understand what each suggested command does
+  - Explanations are displayed in muted style below each command
+
+### Improved
+- **Enhanced AI Response Format**
+  - Updated system prompt to request explanations with each suggestion
+  - Parser now extracts command and explanation separately
+  - Falls back to default explanation if AI doesn't provide one
+  - Better user experience with at-a-glance command understanding
+
+### Technical
+- Updated `parseSuggestions()` to split on `|` delimiter for command/explanation separation
+- Added `TestParseSuggestions_Explanations` test suite for new format
+- Maintains backwards compatibility with commands without explanations
+
 ## [0.4.3] - 2025-11-15
 
 ### Added

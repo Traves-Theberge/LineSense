@@ -12,7 +12,7 @@ func buildSuggestSystemPrompt() string {
 	return `You are an expert shell command assistant. Your job is to suggest 3-5 complete, correct shell commands based on the user's partial input and context.
 
 IMPORTANT RULES:
-1. Provide 3-5 alternative command suggestions (one per line)
+1. Provide 3-5 alternative command suggestions
 2. Order suggestions from most likely to least likely
 3. Make commands safe and appropriate
 4. Use the context (git info, history, cwd) to make intelligent suggestions
@@ -22,11 +22,13 @@ IMPORTANT RULES:
 8. Keep commands concise but complete
 
 RESPONSE FORMAT:
-Return one command per line, no numbering, no explanations, no markdown.
+One suggestion per line in this exact format:
+COMMAND | brief explanation (5-10 words max)
+
 Example:
-ls -la
-find . -type f -name "*.txt"
-tree -L 2`
+ls -la | List all files with details
+find . -type f -name "*.txt" | Find all text files recursively
+tree -L 2 | Show directory tree 2 levels deep`
 }
 
 // buildSuggestUserPrompt creates the user prompt with context
@@ -121,22 +123,35 @@ func parseSuggestions(response string, originalLine string) []core.Suggestion {
 
 	var suggestions []core.Suggestion
 	for _, line := range lines {
-		command := strings.TrimSpace(line)
+		line = strings.TrimSpace(line)
 
 		// Skip empty lines
-		if command == "" {
+		if line == "" {
 			continue
 		}
 
 		// Skip numbered lines (in case AI added numbering)
-		command = strings.TrimPrefix(command, "1. ")
-		command = strings.TrimPrefix(command, "2. ")
-		command = strings.TrimPrefix(command, "3. ")
-		command = strings.TrimPrefix(command, "4. ")
-		command = strings.TrimPrefix(command, "5. ")
-		command = strings.TrimSpace(command)
+		line = strings.TrimPrefix(line, "1. ")
+		line = strings.TrimPrefix(line, "2. ")
+		line = strings.TrimPrefix(line, "3. ")
+		line = strings.TrimPrefix(line, "4. ")
+		line = strings.TrimPrefix(line, "5. ")
+		line = strings.TrimSpace(line)
 
 		// Skip if still empty after cleanup
+		if line == "" {
+			continue
+		}
+
+		// Split on pipe to separate command from explanation
+		parts := strings.SplitN(line, "|", 2)
+		command := strings.TrimSpace(parts[0])
+		explanation := ""
+		if len(parts) > 1 {
+			explanation = strings.TrimSpace(parts[1])
+		}
+
+		// Skip if command is empty
 		if command == "" {
 			continue
 		}
@@ -144,10 +159,15 @@ func parseSuggestions(response string, originalLine string) []core.Suggestion {
 		// Create suggestion with risk assessment
 		risk := assessRisk(command)
 
+		// Use the extracted explanation if available, otherwise use default
+		if explanation == "" {
+			explanation = fmt.Sprintf("Suggested based on: %s", originalLine)
+		}
+
 		suggestions = append(suggestions, core.Suggestion{
 			Command:     command,
 			Risk:        risk,
-			Explanation: fmt.Sprintf("Suggested based on: %s", originalLine),
+			Explanation: explanation,
 			Source:      "llm",
 		})
 
