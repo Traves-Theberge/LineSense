@@ -140,12 +140,12 @@ Runs Gosec security scanner:
    - Click "Details" next to each check to see logs
 
 2. **In Actions Tab:**
-   - Visit `https://github.com/traves/LineSense/actions`
+   - Visit `https://github.com/Traves-Theberge/LineSense/actions`
    - Click on a workflow run to see all jobs
    - Click on a job to see detailed logs
 
 3. **Badges:**
-   - README shows CI badge: [![CI](https://github.com/traves/LineSense/workflows/CI/badge.svg)](https://github.com/traves/LineSense/actions)
+   - README shows CI badge: [![CI](https://github.com/Traves-Theberge/LineSense/workflows/CI/badge.svg)](https://github.com/Traves-Theberge/LineSense/actions)
 
 ## Release Process
 
@@ -362,12 +362,12 @@ git push origin v1.0.0
 
 **Monitor progress:**
 ```
-https://github.com/traves/LineSense/actions
+https://github.com/Traves-Theberge/LineSense/actions
 ```
 
 #### 3. Verify Release
 
-1. Visit: `https://github.com/traves/LineSense/releases/latest`
+1. Visit: `https://github.com/Traves-Theberge/LineSense/releases/latest`
 2. Check:
    - ✅ All binaries present
    - ✅ Checksums file exists
@@ -380,7 +380,7 @@ Download and test the release:
 
 ```bash
 # Linux/macOS
-wget https://github.com/traves/LineSense/releases/download/v1.0.0/LineSense_v1.0.0_Linux_x86_64.tar.gz
+wget https://github.com/Traves-Theberge/LineSense/releases/download/v1.0.0/LineSense_v1.0.0_Linux_x86_64.tar.gz
 tar -xzf LineSense_v1.0.0_Linux_x86_64.tar.gz
 ./linesense --version
 
@@ -530,7 +530,7 @@ git push origin --tags
 
 - **GoReleaser Docs:** https://goreleaser.com/
 - **GitHub Actions Docs:** https://docs.github.com/en/actions
-- **Project Issues:** https://github.com/traves/LineSense/issues
+- **Project Issues:** https://github.com/Traves-Theberge/LineSense/issues
 - **golangci-lint Docs:** https://golangci-lint.run/
 
 ## Best Practices

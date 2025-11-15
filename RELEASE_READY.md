@@ -248,7 +248,7 @@ checksums.txt (SHA256 checksums for all)
 
 4. **Verify release:**
    ```bash
-   # Visit: https://github.com/traves/LineSense/releases/latest
+   # Visit: https://github.com/Traves-Theberge/LineSense/releases/latest
    # Download and test the install script
    curl -fsSL https://raw.githubusercontent.com/traves/LineSense/v0.3.0/install.sh | bash
    ```

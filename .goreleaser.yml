@@ -111,12 +111,12 @@ release:
   footer: |
     ---
 
-    **Full Changelog**: https://github.com/traves/LineSense/compare/{{ .PreviousTag }}...{{ .Tag }}
+    **Full Changelog**: https://github.com/Traves-Theberge/LineSense/compare/{{ .PreviousTag }}...{{ .Tag }}
 
     ### Questions or Feedback?
-    - 📖 [Documentation](https://github.com/traves/LineSense/blob/main/README.md)
-    - 🐛 [Report Issues](https://github.com/traves/LineSense/issues)
-    - 💬 [Discussions](https://github.com/traves/LineSense/discussions)
+    - 📖 [Documentation](https://github.com/Traves-Theberge/LineSense/blob/main/README.md)
+    - 🐛 [Report Issues](https://github.com/Traves-Theberge/LineSense/issues)
+    - 💬 [Discussions](https://github.com/Traves-Theberge/LineSense/discussions)
 
 # Homebrew tap (future)
 brews:
@@ -125,7 +125,7 @@ brews:
       name: homebrew-tap
       token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
     directory: Formula
-    homepage: https://github.com/traves/LineSense
+    homepage: https://github.com/Traves-Theberge/LineSense
     description: AI-powered shell command suggestions and explanations
     license: MIT
     test: |

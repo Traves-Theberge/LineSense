@@ -2,12 +2,12 @@
 
 AI-powered shell command autocomplete and explanation tool.
 
-[![CI](https://github.com/traves/LineSense/workflows/CI/badge.svg)](https://github.com/traves/LineSense/actions)
+[![CI](https://github.com/Traves-Theberge/LineSense/workflows/CI/badge.svg)](https://github.com/Traves-Theberge/LineSense/actions)
 [![Tests](https://img.shields.io/badge/tests-107%20passing-success)](.)
 [![Coverage](https://img.shields.io/badge/coverage-90.7%25-brightgreen)](.)
 [![Go Version](https://img.shields.io/badge/go-1.21%2B-blue)](.)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
-[![Go Report Card](https://goreportcard.com/badge/github.com/traves/LineSense)](https://goreportcard.com/report/github.com/traves/LineSense)
+[![Go Report Card](https://goreportcard.com/badge/github.com/Traves-Theberge/LineSense)](https://goreportcard.com/report/github.com/Traves-Theberge/LineSense)
 
 ## Overview
 
@@ -91,7 +91,7 @@ If you prefer to install manually or want more control:
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/traves/LineSense.git
+git clone https://github.com/Traves-Theberge/LineSense.git
 cd LineSense
 
 # 2. Build and install
@@ -119,7 +119,7 @@ source ~/.bashrc  # or ~/.zshrc
 Install directly from the repository:
 
 ```bash
-go install github.com/traves/LineSense/cmd/linesense@latest
+go install github.com/Traves-Theberge/LineSense/cmd/linesense@latest
 linesense config init
 linesense config set-key
 ```
@@ -507,17 +507,17 @@ We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for deta
 
 ### Quick Links
 
-- 🐛 [Report a Bug](https://github.com/traves/LineSense/issues/new)
-- 💡 [Request a Feature](https://github.com/traves/LineSense/issues/new)
+- 🐛 [Report a Bug](https://github.com/Traves-Theberge/LineSense/issues/new)
+- 💡 [Request a Feature](https://github.com/Traves-Theberge/LineSense/issues/new)
 - 📖 [View Documentation](docs/)
 - 🧪 [Testing Guide](docs/TESTING.md)
-- 💬 [Join Discussions](https://github.com/traves/LineSense/discussions)
+- 💬 [Join Discussions](https://github.com/Traves-Theberge/LineSense/discussions)
 
 ### Development Quick Start
 
 ```bash
 # Clone and setup
-git clone https://github.com/traves/LineSense.git
+git clone https://github.com/Traves-Theberge/LineSense.git
 cd LineSense
 go install ./cmd/linesense
 

@@ -115,6 +115,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Links
 
-- [Compare v0.2.5...HEAD](https://github.com/traves/LineSense/compare/v0.2.5...HEAD)
-- [Compare v0.2.0...v0.2.5](https://github.com/traves/LineSense/compare/v0.2.0...v0.2.5)
-- [All Releases](https://github.com/traves/LineSense/releases)
+- [Compare v0.2.5...HEAD](https://github.com/Traves-Theberge/LineSense/compare/v0.2.5...HEAD)
+- [Compare v0.2.0...v0.2.5](https://github.com/Traves-Theberge/LineSense/compare/v0.2.0...v0.2.5)
+- [All Releases](https://github.com/Traves-Theberge/LineSense/releases)

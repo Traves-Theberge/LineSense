@@ -6,7 +6,7 @@
 # It handles building, installation, shell integration, and initial configuration.
 #
 # Usage:
-#   curl -fsSL https://raw.githubusercontent.com/traves/LineSense/main/install.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/Traves-Theberge/LineSense/main/install.sh | bash
 #   # or
 #   ./install.sh
 
@@ -20,7 +20,7 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Configuration
-REPO_URL="https://github.com/traves/LineSense.git"
+REPO_URL="https://github.com/Traves-Theberge/LineSense.git"
 INSTALL_DIR="${HOME}/.local/bin"
 CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/linesense"
 

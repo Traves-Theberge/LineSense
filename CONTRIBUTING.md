@@ -28,7 +28,7 @@ This project adheres to a code of conduct that all contributors are expected to 
    ```
 3. **Add upstream remote**:
    ```bash
-   git remote add upstream https://github.com/traves/LineSense.git
+   git remote add upstream https://github.com/Traves-Theberge/LineSense.git
    ```
 
 ## Development Setup
