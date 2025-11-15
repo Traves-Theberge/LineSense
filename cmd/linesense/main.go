@@ -130,8 +130,6 @@ func runSuggest(args []string) error {
 		}
 	}
 
-	ctx := context.Background()
-
 	// Load configuration
 	cfg, err := config.LoadConfig()
 	if err != nil {
@@ -162,8 +160,13 @@ func runSuggest(args []string) error {
 		Context: contextEnv,
 	}
 
-	// Generate suggestions
-	suggestions, err := provider.Suggest(ctx, input)
+	// Generate suggestions with spinner
+	var suggestions []core.Suggestion
+	err = withSpinner("🤖 Generating suggestions...", func(ctx context.Context) error {
+		var err error
+		suggestions, err = provider.Suggest(ctx, input)
+		return err
+	})
 	if err != nil {
 		return fmt.Errorf("failed to generate suggestions: %w", err)
 	}
@@ -178,8 +181,8 @@ func runSuggest(args []string) error {
 		return encoder.Encode(output)
 	}
 
-	// Pretty format (default)
-	printSuggestions(suggestions)
+	// Pretty format (default) with styled output
+	printSuggestionsStyled(suggestions)
 	return nil
 }
 
@@ -215,8 +218,6 @@ func runExplain(args []string) error {
 		}
 	}
 
-	ctx := context.Background()
-
 	// Load configuration
 	cfg, err := config.LoadConfig()
 	if err != nil {
@@ -247,8 +248,13 @@ func runExplain(args []string) error {
 		Context: contextEnv,
 	}
 
-	// Generate explanation
-	explanation, err := provider.Explain(ctx, input)
+	// Generate explanation with spinner
+	var explanation core.Explanation
+	err = withSpinner("🤖 Analyzing command...", func(ctx context.Context) error {
+		var err error
+		explanation, err = provider.Explain(ctx, input)
+		return err
+	})
 	if err != nil {
 		return fmt.Errorf("failed to generate explanation: %w", err)
 	}
@@ -260,8 +266,8 @@ func runExplain(args []string) error {
 		return encoder.Encode(explanation)
 	}
 
-	// Pretty format (default)
-	printExplanation(explanation)
+	// Pretty format (default) with styled output
+	printExplanationStyled(explanation)
 	return nil
 }
 
