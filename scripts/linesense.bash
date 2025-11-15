@@ -135,7 +135,3 @@ bind -x "\"${LINESENSE_SUGGEST_KEY}\": _linesense_request"
 LINESENSE_EXPLAIN_KEY="${LINESENSE_EXPLAIN_KEY:-"\C-x\C-e"}"
 bind -x "\"${LINESENSE_EXPLAIN_KEY}\": _linesense_explain"
 
-# Print keybinding information
-echo "LineSense bash integration loaded:" >&2
-echo "  Suggest: ${LINESENSE_SUGGEST_KEY//\\C-/Ctrl+} (default: Ctrl+Space)" >&2
-echo "  Explain: ${LINESENSE_EXPLAIN_KEY//\\C-/Ctrl+} (default: Ctrl+X Ctrl+E)" >&2
