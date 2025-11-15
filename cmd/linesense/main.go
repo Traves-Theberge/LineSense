@@ -77,12 +77,14 @@ Suggest Flags:
   --line string      Partial command line to complete (required)
   --cwd string       Current working directory (default: current directory)
   --model string     Override model ID from config
+  --format string    Output format: pretty or json (default: pretty)
 
 Explain Flags:
   --shell string     Shell type (bash, zsh) (default: auto-detect)
   --line string      Command to explain (required)
   --cwd string       Current working directory (default: current directory)
   --model string     Override model ID from config
+  --format string    Output format: pretty or json (default: pretty)
 
 Examples:
   linesense suggest --line "list files"
@@ -103,6 +105,7 @@ func runSuggest(args []string) error {
 	line := fs.String("line", "", "Partial command line to complete")
 	cwd := fs.String("cwd", "", "Current working directory")
 	model := fs.String("model", "", "Override model ID from config")
+	format := fs.String("format", "pretty", "Output format: json or pretty")
 
 	if err := fs.Parse(args); err != nil {
 		return err
@@ -165,14 +168,19 @@ func runSuggest(args []string) error {
 		return fmt.Errorf("failed to generate suggestions: %w", err)
 	}
 
-	// Output as JSON
-	output := map[string]interface{}{
-		"suggestions": suggestions,
+	// Output based on format
+	if *format == "json" {
+		output := map[string]interface{}{
+			"suggestions": suggestions,
+		}
+		encoder := json.NewEncoder(os.Stdout)
+		encoder.SetIndent("", "  ")
+		return encoder.Encode(output)
 	}
 
-	encoder := json.NewEncoder(os.Stdout)
-	encoder.SetIndent("", "  ")
-	return encoder.Encode(output)
+	// Pretty format (default)
+	printSuggestions(suggestions)
+	return nil
 }
 
 func runExplain(args []string) error {
@@ -182,6 +190,7 @@ func runExplain(args []string) error {
 	line := fs.String("line", "", "Command to explain")
 	cwd := fs.String("cwd", "", "Current working directory")
 	model := fs.String("model", "", "Override model ID from config")
+	format := fs.String("format", "pretty", "Output format: json or pretty")
 
 	if err := fs.Parse(args); err != nil {
 		return err
@@ -244,10 +253,16 @@ func runExplain(args []string) error {
 		return fmt.Errorf("failed to generate explanation: %w", err)
 	}
 
-	// Output as JSON
-	encoder := json.NewEncoder(os.Stdout)
-	encoder.SetIndent("", "  ")
-	return encoder.Encode(explanation)
+	// Output based on format
+	if *format == "json" {
+		encoder := json.NewEncoder(os.Stdout)
+		encoder.SetIndent("", "  ")
+		return encoder.Encode(explanation)
+	}
+
+	// Pretty format (default)
+	printExplanation(explanation)
+	return nil
 }
 
 // detectShell attempts to auto-detect the current shell
@@ -545,4 +560,122 @@ func copyFile(src, dst string) error {
 		return err
 	}
 	return os.WriteFile(dst, content, 0600)
+}
+
+// printSuggestions prints command suggestions in a pretty format with colors
+func printSuggestions(suggestions []core.Suggestion) {
+	if len(suggestions) == 0 {
+		fmt.Println("No suggestions found.")
+		return
+	}
+
+	// Color codes
+	const (
+		colorReset  = "\033[0m"
+		colorBold   = "\033[1m"
+		colorGreen  = "\033[32m"
+		colorYellow = "\033[33m"
+		colorRed    = "\033[31m"
+		colorCyan   = "\033[36m"
+		colorGray   = "\033[90m"
+	)
+
+	fmt.Printf("\n%s💡 Command Suggestions%s\n", colorBold, colorReset)
+	fmt.Println(strings.Repeat("─", 60))
+
+	for i, suggestion := range suggestions {
+		// Risk indicator with color
+		var riskColor, riskIndicator string
+		switch suggestion.Risk {
+		case "low":
+			riskColor = colorGreen
+			riskIndicator = "✓"
+		case "medium":
+			riskColor = colorYellow
+			riskIndicator = "⚠"
+		case "high":
+			riskColor = colorRed
+			riskIndicator = "⚠"
+		default:
+			riskColor = colorGray
+			riskIndicator = "•"
+		}
+
+		// Print suggestion number
+		fmt.Printf("\n%s%d.%s ", colorCyan, i+1, colorReset)
+
+		// Print command in bold
+		fmt.Printf("%s%s%s\n", colorBold, suggestion.Command, colorReset)
+
+		// Print risk level
+		fmt.Printf("   %s%s Risk: %s%s\n", riskColor, riskIndicator, suggestion.Risk, colorReset)
+
+		// Print explanation
+		if suggestion.Explanation != "" {
+			fmt.Printf("   %s%s%s\n", colorGray, suggestion.Explanation, colorReset)
+		}
+	}
+
+	fmt.Println()
+}
+
+// printExplanation prints a command explanation in a pretty format with colors
+func printExplanation(explanation core.Explanation) {
+	// Color codes
+	const (
+		colorReset  = "\033[0m"
+		colorBold   = "\033[1m"
+		colorGreen  = "\033[32m"
+		colorYellow = "\033[33m"
+		colorRed    = "\033[31m"
+		colorCyan   = "\033[36m"
+		colorGray   = "\033[90m"
+	)
+
+	// Risk indicator with color
+	var riskColor, riskIndicator string
+	switch explanation.Risk {
+	case "low":
+		riskColor = colorGreen
+		riskIndicator = "✓"
+	case "medium":
+		riskColor = colorYellow
+		riskIndicator = "⚠"
+	case "high":
+		riskColor = colorRed
+		riskIndicator = "⚠"
+	default:
+		riskColor = colorGray
+		riskIndicator = "•"
+	}
+
+	// Print header
+	fmt.Printf("\n%s📖 Command Explanation%s\n", colorBold, colorReset)
+	fmt.Println(strings.Repeat("─", 60))
+	fmt.Println()
+
+	// Print summary
+	fmt.Printf("%sSummary:%s\n", colorBold, colorReset)
+	fmt.Printf("%s\n", explanation.Summary)
+	fmt.Println()
+
+	// Print risk level
+	fmt.Printf("%sRisk Level:%s %s%s %s%s\n", colorBold, colorReset, riskColor, riskIndicator, explanation.Risk, colorReset)
+	fmt.Println()
+
+	// Print detailed notes
+	if len(explanation.Notes) > 0 {
+		fmt.Printf("%sDetails:%s\n", colorBold, colorReset)
+		for _, note := range explanation.Notes {
+			// Check if this is a header (no leading spaces/punctuation)
+			if len(note) > 0 && note[0] != ' ' && note[0] != '-' && !strings.HasPrefix(note, "  ") {
+				// This looks like a section header
+				fmt.Printf("\n%s%s%s\n", colorCyan, note, colorReset)
+			} else {
+				// Regular note
+				fmt.Printf("%s%s%s\n", colorGray, note, colorReset)
+			}
+		}
+		fmt.Println()
+	}
 }
