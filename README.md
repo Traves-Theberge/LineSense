@@ -15,14 +15,20 @@ LineSense is an intelligent shell assistant that provides context-aware command 
 
 ## Features
 
+- **🎯 OS-Aware Suggestions** (NEW in v0.5.0): Automatically detects your OS, distribution, and package manager
+  - Get `brew install` on macOS, `apt install` on Ubuntu, `pacman -S` on Arch
+  - Smart command suggestions tailored to your system
+  - Zero configuration required
 - **🎨 Beautiful Terminal UI**: Styled output with colors, borders, and dynamic width adjustment
 - **🔄 Dual Output Modes**: Pretty format for humans, JSON for scripting (`--format` flag)
 - **⚡ Loading Indicators**: Animated spinner while AI processes your request
-- **🧠 Context-Aware Suggestions**: Uses git info, shell history, and environment
+- **🧠 Context-Aware Suggestions**: Uses git info, shell history, environment, and OS context
 - **🛡️ Safety First**: Risk classification and configurable denylists
 - **🐚 Multi-Shell Support**: Works with bash and zsh
 - **🚀 OpenRouter Integration**: Powered by state-of-the-art LLMs via OpenRouter
 - **📏 Responsive Design**: Output automatically adapts to terminal width
+- **💡 Smart Explanations**: Each suggestion includes a brief 5-10 word explanation
+- **🔢 Multiple Suggestions**: Get 3-5 alternative command options for every request
 
 ## Project Structure
 
@@ -41,10 +47,12 @@ LineSense is an intelligent shell assistant that provides context-aware command 
 │   │   ├── engine.go       # Main suggest/explain engine
 │   │   ├── git.go          # Git integration
 │   │   ├── history.go      # Shell history
+│   │   ├── osdetect.go     # OS & package manager detection
 │   │   ├── safety.go       # Safety filters
 │   │   └── usage.go        # Usage logging
 │   └── ai/                 # AI provider implementations
 │       ├── provider.go     # Provider factory
+│       ├── prompts.go      # AI prompts & parsing
 │       └── openrouter.go   # OpenRouter implementation
 ├── scripts/
 │   ├── linesense.bash      # Bash integration
@@ -176,11 +184,39 @@ linesense suggest --line "git com" --model openai/gpt-4o
 
 1. ls -lhS
    ✓ Risk: low
-   Lists files in long format, human-readable sizes, sorted by size
+   List files sorted by size in human-readable format
 
 2. find . -type f -exec du -h {} + | sort -rh | head -20
+   ✓ Risk: low
+   Find and display 20 largest files
+
+3. du -ah . | sort -rh | head -20
+   ✓ Risk: low
+   Show disk usage sorted by size
+```
+
+**OS-Aware Examples:**
+
+Ubuntu user types "install nginx":
+```
+1. sudo apt install nginx
    ⚠ Risk: medium
-   Finds and sorts the 20 largest files recursively
+   Install nginx web server using apt
+
+2. sudo apt install nginx-full
+   ⚠ Risk: medium
+   Install nginx with all available modules
+```
+
+macOS user types "install nginx":
+```
+1. brew install nginx
+   ✓ Risk: low
+   Install nginx web server using Homebrew
+
+2. brew install nginx --with-pcre
+   ✓ Risk: low
+   Install nginx with PCRE support
 ```
 
 **JSON Output** (`--format json`):
@@ -403,7 +439,7 @@ denylist = [
 
 LineSense is **production-ready** with beautiful terminal UI and full shell integration! All core features are implemented and tested.
 
-**Current Version: v0.4.3** - Multiple Command Suggestions
+**Current Version: v0.5.0** - OS-Aware Command Suggestions
 
 ### ✅ Phase 1: Core Infrastructure & CLI - **COMPLETE**
 
@@ -414,6 +450,9 @@ LineSense is **production-ready** with beautiful terminal UI and full shell inte
    - .env file support for development
 
 2. **Context Gathering** - Rich contextual awareness
+   - Operating system detection (Linux, macOS, Windows)
+   - Linux distribution detection (Ubuntu, Arch, Fedora, etc.)
+   - Package manager detection (apt, yum, dnf, pacman, brew, etc.)
    - Git repository detection (branch, status, remotes)
    - Shell history parsing (bash and zsh)
    - Environment variable filtering (security-aware)
@@ -421,9 +460,12 @@ LineSense is **production-ready** with beautiful terminal UI and full shell inte
 
 3. **AI Integration** - OpenRouter API
    - HTTP client with authentication and timeouts
-   - Context-aware prompt construction
+   - Context-aware prompt construction (with OS detection)
    - Response parsing and structuring
    - Risk assessment (low/medium/high)
+   - OS-specific command suggestions
+   - Multiple alternative suggestions (3-5 per request)
+   - Brief explanations for each suggestion
 
 4. **CLI** - Full-featured command-line interface
    - `suggest` command for generating suggestions

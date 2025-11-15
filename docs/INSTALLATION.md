@@ -37,7 +37,13 @@ Before installing LineSense, ensure you have:
    git --version
    ```
 
-4. **jq** (optional but recommended for better shell integration)
+4. **Supported Operating System**
+   - Linux (any distribution with `/etc/os-release`)
+   - macOS (Darwin)
+   - Windows
+   - LineSense automatically detects your OS and package manager - no configuration needed!
+
+5. **jq** (optional but recommended for better shell integration)
    ```bash
    # Ubuntu/Debian
    sudo apt-get install jq
