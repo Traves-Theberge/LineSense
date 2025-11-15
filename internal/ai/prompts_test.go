@@ -17,7 +17,8 @@ func TestBuildSuggestSystemPrompt(t *testing.T) {
 	// Verify it contains key instructions
 	requiredPhrases := []string{
 		"shell command",
-		"ONLY the complete command",
+		"3-5",
+		"alternative",
 		"safe",
 		"context",
 	}
@@ -177,10 +178,10 @@ func TestParseSuggestions(t *testing.T) {
 			wantRisk:     core.RiskMedium,
 		},
 		{
-			name:         "multiline response",
-			response:     "git status\nThis shows the status",
+			name:         "multiline response (now returns multiple suggestions)",
+			response:     "git status\ngit st",
 			originalLine: "git st",
-			wantCommand:  "git status",
+			wantCommand:  "git status", // First suggestion
 			wantRisk:     core.RiskLow,
 		},
 		{
@@ -203,16 +204,17 @@ func TestParseSuggestions(t *testing.T) {
 				return
 			}
 
-			if len(suggestions) != 1 {
-				t.Fatalf("Expected 1 suggestion, got %d", len(suggestions))
+			if len(suggestions) < 1 {
+				t.Fatalf("Expected at least 1 suggestion, got %d", len(suggestions))
 			}
 
+			// Check the first suggestion matches expected
 			suggestion := suggestions[0]
 			if suggestion.Command != tt.wantCommand {
-				t.Errorf("Command = %q, want %q", suggestion.Command, tt.wantCommand)
+				t.Errorf("First command = %q, want %q", suggestion.Command, tt.wantCommand)
 			}
 			if suggestion.Risk != tt.wantRisk {
-				t.Errorf("Risk = %v, want %v", suggestion.Risk, tt.wantRisk)
+				t.Errorf("First risk = %v, want %v", suggestion.Risk, tt.wantRisk)
 			}
 			if suggestion.Source != "llm" {
 				t.Errorf("Source = %q, want llm", suggestion.Source)
