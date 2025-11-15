@@ -298,11 +298,10 @@ source ~/.config/linesense/shell/linesense.bash
 ```
 
 **Features:**
-- 🔇 Silent loading - no startup messages or output
-- 🎨 Beautiful UI - same styled output as the CLI (boxes, colors, borders)
 - 💡 Smart suggestions - handles typos and provides intent-based alternatives
 - 📖 Detailed explanations - comprehensive command breakdowns with risk assessment
 - 🧠 Context-aware - uses current directory, git status, and shell history
+- 🖥️ OS-aware - detects your operating system, distribution, and package manager for tailored suggestions
 
 ## Configuration
 
