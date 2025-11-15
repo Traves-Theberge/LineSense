@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.1] - 2025-11-15
+
+### Fixed
+- **Shell Integration Keybindings**
+  - Fixed keybinding variable quoting that was stripping backslashes
+  - Changed default suggest keybinding from `\C- ` to `\C-@` (proper readline notation for Ctrl+Space)
+  - Keybindings now work correctly: Ctrl+Space for suggestions, Ctrl+X Ctrl+E for explanations
+  - Removed nested quotes in parameter expansion to preserve control sequences
+
+### Changed
+- **Silent Shell Integration by Default**
+  - Removed startup messages when shell integration loads
+  - Clean, unobtrusive loading experience
+  - Updated documentation to reflect silent loading as default behavior
+
+### Documentation
+- Updated README to document silent shell integration
+- Updated INSTALLATION.md with correct shell integration paths
+- Fixed shell script source paths to use `~/.config/linesense/shell/`
+- Added "Silent Loading" section to installation docs
+
 ## [0.4.0] - 2025-11-14
 
 ### Added
