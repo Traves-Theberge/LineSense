@@ -15,7 +15,7 @@ LineSense is an intelligent shell assistant that provides context-aware command 
 
 ## Features
 
-- **🎯 OS-Aware Suggestions** (NEW in v0.5.0): Automatically detects your OS, distribution, and package manager
+- **🎯 OS-Aware Suggestions** (NEW in v0.5.2): Automatically detects your OS, distribution, and package manager
   - Get `brew install` on macOS, `apt install` on Ubuntu, `pacman -S` on Arch
   - Smart command suggestions tailored to your system
   - Zero configuration required
