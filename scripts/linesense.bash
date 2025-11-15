@@ -127,11 +127,12 @@ _linesense_explain() {
 #   export LINESENSE_EXPLAIN_KEY="\C-h"  # Ctrl+H for explain
 
 # Suggest keybinding (default: Ctrl+Space)
-LINESENSE_SUGGEST_KEY="${LINESENSE_SUGGEST_KEY:-"\C- "}"
+# Note: \C-@ is the readline notation for Ctrl+Space (ASCII NUL)
+LINESENSE_SUGGEST_KEY="${LINESENSE_SUGGEST_KEY:-\C-@}"
 bind -x "\"${LINESENSE_SUGGEST_KEY}\": _linesense_request"
 
 # Explain keybinding (default: Ctrl+X Ctrl+E to avoid conflicts)
 # Note: Ctrl+E conflicts with readline's end-of-line, so we use Ctrl+X Ctrl+E
-LINESENSE_EXPLAIN_KEY="${LINESENSE_EXPLAIN_KEY:-"\C-x\C-e"}"
+LINESENSE_EXPLAIN_KEY="${LINESENSE_EXPLAIN_KEY:-\C-x\C-e}"
 bind -x "\"${LINESENSE_EXPLAIN_KEY}\": _linesense_explain"
 
