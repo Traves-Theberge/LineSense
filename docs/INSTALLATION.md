@@ -139,7 +139,7 @@ source ~/.bashrc
 
 ## Shell Integration
 
-Shell integration enables interactive keybindings for AI-powered suggestions.
+Shell integration enables interactive keybindings for AI-powered suggestions. The integration loads silently in the background with no startup messages or notifications (as of v0.4.0).
 
 ### Bash Setup
 
@@ -147,10 +147,14 @@ Add this to your `~/.bashrc`:
 
 ```bash
 # LineSense shell integration
-if [ -f /path/to/linesense/scripts/linesense.bash ]; then
-    source /path/to/linesense/scripts/linesense.bash
+if [ -f ~/.config/linesense/shell/linesense.bash ]; then
+    source ~/.config/linesense/shell/linesense.bash
 fi
 ```
+
+**Default keybindings:**
+- `Ctrl+Space` - Get AI suggestions for current line
+- `Ctrl+X Ctrl+E` - Explain current command
 
 **Custom keybindings** (optional):
 
@@ -159,12 +163,8 @@ fi
 export LINESENSE_SUGGEST_KEY="\C-t"      # Ctrl+T for suggestions
 export LINESENSE_EXPLAIN_KEY="\C-x\C-h"  # Ctrl+X Ctrl+H for explanations
 
-source /path/to/linesense/scripts/linesense.bash
+source ~/.config/linesense/shell/linesense.bash
 ```
-
-**Default keybindings:**
-- `Ctrl+Space` - Get AI suggestions for current line
-- `Ctrl+X Ctrl+E` - Explain current command
 
 ### Zsh Setup
 
@@ -172,10 +172,14 @@ Add this to your `~/.zshrc`:
 
 ```zsh
 # LineSense shell integration
-if [ -f /path/to/linesense/scripts/linesense.zsh ]; then
-    source /path/to/linesense/scripts/linesense.zsh
+if [ -f ~/.config/linesense/shell/linesense.zsh ]; then
+    source ~/.config/linesense/shell/linesense.zsh
 fi
 ```
+
+**Default keybindings:**
+- `Ctrl+Space` - Get AI suggestions for current line
+- `Ctrl+X Ctrl+E` - Explain current command
 
 **Custom keybindings** (optional):
 
@@ -184,12 +188,12 @@ fi
 export LINESENSE_SUGGEST_KEY="^T"      # Ctrl+T for suggestions
 export LINESENSE_EXPLAIN_KEY="^X^H"   # Ctrl+X Ctrl+H for explanations
 
-source /path/to/linesense/scripts/linesense.zsh
+source ~/.config/linesense/shell/linesense.zsh
 ```
 
-**Default keybindings:**
-- `Ctrl+Space` - Get AI suggestions for current line
-- `Ctrl+X Ctrl+E` - Explain current command
+### Silent Loading
+
+By default, LineSense shell integration loads silently without displaying any startup messages. This provides a clean, unobtrusive experience. The integration is active and ready to use as soon as your shell starts - just use the keybindings to invoke it.
 
 ### Reload Shell
 

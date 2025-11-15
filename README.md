@@ -245,7 +245,7 @@ Details
 
 ### Shell Integration
 
-LineSense provides interactive shell integration for both bash and zsh:
+LineSense provides interactive shell integration for both bash and zsh. The integration loads silently in the background - no startup messages or notifications.
 
 **Default Keybindings:**
 - Press `Ctrl+Space` to get AI-powered command suggestions
@@ -258,14 +258,15 @@ You can customize keybindings by setting environment variables before sourcing t
 # In your ~/.bashrc or ~/.zshrc
 export LINESENSE_SUGGEST_KEY="\C-t"      # Change suggest to Ctrl+T
 export LINESENSE_EXPLAIN_KEY="\C-x\C-h"  # Change explain to Ctrl+X Ctrl+H
-source /path/to/linesense/scripts/linesense.bash
+source ~/.config/linesense/shell/linesense.bash
 ```
 
 **Features:**
-- Color-coded risk indicators (🟢 low, 🟡 medium, 🔴 high)
-- Smart JSON parsing with jq (falls back to grep/sed if jq is not installed)
-- Formatted explanation output with command breakdown
-- Context-aware suggestions based on current directory, git status, and history
+- 🔇 Silent loading - no startup messages or output
+- 🎨 Color-coded risk indicators (🟢 low, 🟡 medium, 🔴 high)
+- 🔧 Smart JSON parsing with jq (falls back to grep/sed if jq is not installed)
+- 📝 Formatted explanation output with command breakdown
+- 🧠 Context-aware suggestions based on current directory, git status, and history
 
 ## Configuration
 
