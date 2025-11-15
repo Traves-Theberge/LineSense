@@ -249,7 +249,7 @@ LineSense provides interactive shell integration for both bash and zsh. The inte
 
 **Default Keybindings:**
 - Press `Ctrl+Space` to get AI-powered command suggestions
-- Press `Ctrl+X Ctrl+E` to get an explanation of the current command
+- Press `Ctrl+X` to get an explanation of the current command
 
 **Customization:**
 You can customize keybindings by setting environment variables before sourcing the script:

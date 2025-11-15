@@ -56,8 +56,7 @@ _linesense_explain() {
 LINESENSE_SUGGEST_KEY="${LINESENSE_SUGGEST_KEY:-\C-@}"
 bind -x "\"${LINESENSE_SUGGEST_KEY}\": _linesense_request"
 
-# Explain keybinding (default: Ctrl+X Ctrl+E to avoid conflicts)
-# Note: Ctrl+E conflicts with readline's end-of-line, so we use Ctrl+X Ctrl+E
-LINESENSE_EXPLAIN_KEY="${LINESENSE_EXPLAIN_KEY:-\C-x\C-e}"
+# Explain keybinding (default: Ctrl+X)
+LINESENSE_EXPLAIN_KEY="${LINESENSE_EXPLAIN_KEY:-\C-x}"
 bind -x "\"${LINESENSE_EXPLAIN_KEY}\": _linesense_explain"
 

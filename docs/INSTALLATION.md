@@ -154,7 +154,7 @@ fi
 
 **Default keybindings:**
 - `Ctrl+Space` - Get AI suggestions for current line
-- `Ctrl+X Ctrl+E` - Explain current command
+- `Ctrl+X` - Explain current command
 
 **Custom keybindings** (optional):
 
@@ -179,7 +179,7 @@ fi
 
 **Default keybindings:**
 - `Ctrl+Space` - Get AI suggestions for current line
-- `Ctrl+X Ctrl+E` - Explain current command
+- `Ctrl+X` - Explain current command
 
 **Custom keybindings** (optional):
 
