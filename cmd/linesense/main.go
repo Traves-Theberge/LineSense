@@ -162,7 +162,7 @@ func runSuggest(args []string) error {
 
 	// Generate suggestions with spinner
 	var suggestions []core.Suggestion
-	err = withSpinner("🤖 Generating suggestions...", func(ctx context.Context) error {
+	err = withSpinner("Generating suggestions...", func(ctx context.Context) error {
 		var err error
 		suggestions, err = provider.Suggest(ctx, input)
 		return err
@@ -250,7 +250,7 @@ func runExplain(args []string) error {
 
 	// Generate explanation with spinner
 	var explanation core.Explanation
-	err = withSpinner("🤖 Analyzing command...", func(ctx context.Context) error {
+	err = withSpinner("Analyzing command...", func(ctx context.Context) error {
 		var err error
 		explanation, err = provider.Explain(ctx, input)
 		return err

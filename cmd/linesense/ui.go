@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"os"
 	"strings"
 	"time"
 
@@ -10,7 +11,25 @@ import (
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"golang.org/x/term"
 )
+
+// getTerminalWidth returns the terminal width, defaulting to 80
+func getTerminalWidth() int {
+	width, _, err := term.GetSize(int(os.Stdout.Fd()))
+	if err != nil || width == 0 {
+		return 80
+	}
+	// Leave some padding
+	if width > 10 {
+		width -= 10
+	}
+	// Cap at reasonable maximum
+	if width > 100 {
+		width = 100
+	}
+	return width
+}
 
 // Color scheme using Lipgloss
 var (
@@ -150,9 +169,12 @@ func printSuggestionsStyled(suggestions []core.Suggestion) {
 		return
 	}
 
+	// Get terminal width for dynamic sizing
+	termWidth := getTerminalWidth()
+
 	// Header
 	header := titleStyle.Render("💡 Command Suggestions")
-	divider := strings.Repeat("─", 60)
+	divider := strings.Repeat("─", termWidth)
 	fmt.Printf("\n%s\n%s\n", header, mutedStyle.Render(divider))
 
 	for i, suggestion := range suggestions {
@@ -206,15 +228,22 @@ func printSuggestionsStyled(suggestions []core.Suggestion) {
 
 // printExplanationStyled prints a command explanation with Lipgloss styling
 func printExplanationStyled(explanation core.Explanation) {
+	// Get terminal width for dynamic sizing
+	termWidth := getTerminalWidth()
+	contentWidth := termWidth - 6 // Account for box padding/borders
+	if contentWidth < 40 {
+		contentWidth = 40
+	}
+
 	// Header
 	header := titleStyle.Render("📖 Command Explanation")
-	divider := strings.Repeat("─", 60)
+	divider := strings.Repeat("─", termWidth)
 	fmt.Printf("\n%s\n%s\n\n", header, mutedStyle.Render(divider))
 
 	// Summary box
 	summaryTitle := headerStyle.Render("Summary")
 	summaryText := lipgloss.NewStyle().
-		Width(70).
+		Width(contentWidth).
 		Render(explanation.Summary)
 	summaryBox := boxStyle.Render(fmt.Sprintf("%s\n\n%s", summaryTitle, summaryText))
 	fmt.Println(summaryBox)
@@ -256,15 +285,20 @@ func printExplanationStyled(explanation core.Explanation) {
 		for _, note := range explanation.Notes {
 			// Check if this is a header (no leading spaces/punctuation)
 			if len(note) > 0 && note[0] != ' ' && note[0] != '-' && !strings.HasPrefix(note, "  ") {
-				// Section header
-				detailsParts = append(detailsParts, "")
-				detailsParts = append(detailsParts, lipgloss.NewStyle().
+				// Section header - wrap to content width
+				wrapped := lipgloss.NewStyle().
+					Width(contentWidth).
 					Foreground(secondaryColor).
 					Bold(true).
-					Render(note))
+					Render(note)
+				detailsParts = append(detailsParts, "")
+				detailsParts = append(detailsParts, wrapped)
 			} else {
-				// Regular note
-				detailsParts = append(detailsParts, mutedStyle.Render(note))
+				// Regular note - wrap to content width
+				wrapped := lipgloss.NewStyle().
+					Width(contentWidth).
+					Render(note)
+				detailsParts = append(detailsParts, mutedStyle.Render(wrapped))
 			}
 		}
 
