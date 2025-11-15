@@ -1,0 +1,107 @@
+run:
+  timeout: 5m
+  tests: true
+  modules-download-mode: readonly
+
+linters:
+  enable:
+    - errcheck      # Check for unchecked errors
+    - gosimple      # Simplify code
+    - govet         # Vet examines Go source code
+    - ineffassign   # Detect ineffectual assignments
+    - staticcheck   # Go static analysis
+    - unused        # Check for unused code
+    - gofmt         # Check formatting
+    - goimports     # Check import formatting
+    - misspell      # Check for misspelled words
+    - gocritic      # Comprehensive Go linter
+    - revive        # Fast, configurable, extensible linter
+    - gosec         # Security-focused linter
+    - exportloopref # Check for loop variable references
+    - unconvert     # Remove unnecessary type conversions
+    - unparam       # Report unused function parameters
+    - prealloc      # Find slice declarations that could be preallocated
+
+linters-settings:
+  errcheck:
+    check-type-assertions: true
+    check-blank: true
+
+  govet:
+    enable-all: true
+    disable:
+      - shadow
+
+  gofmt:
+    simplify: true
+
+  goimports:
+    local-prefixes: github.com/traves/LineSense
+
+  misspell:
+    locale: US
+
+  gocritic:
+    enabled-tags:
+      - diagnostic
+      - experimental
+      - opinionated
+      - performance
+      - style
+
+  revive:
+    confidence: 0.8
+    rules:
+      - name: blank-imports
+      - name: context-as-argument
+      - name: context-keys-type
+      - name: dot-imports
+      - name: error-return
+      - name: error-strings
+      - name: error-naming
+      - name: exported
+      - name: if-return
+      - name: increment-decrement
+      - name: var-naming
+      - name: var-declaration
+      - name: package-comments
+      - name: range
+      - name: receiver-naming
+      - name: time-naming
+      - name: unexported-return
+      - name: indent-error-flow
+      - name: errorf
+      - name: empty-block
+      - name: superfluous-else
+      - name: unused-parameter
+      - name: unreachable-code
+      - name: redefines-builtin-id
+
+  gosec:
+    excludes:
+      - G204  # Subprocess with variable (we need this for shell commands)
+      - G304  # File path from variable (we need this for config files)
+
+issues:
+  exclude-rules:
+    # Exclude some linters from test files
+    - path: _test\.go
+      linters:
+        - gosec
+        - errcheck
+        - gocritic
+
+    # Exclude specific issues
+    - text: "should have comment"
+      linters:
+        - revive
+
+    - text: "should not use dot imports"
+      linters:
+        - revive
+
+  max-issues-per-linter: 0
+  max-same-issues: 0
+
+  # Show only new issues
+  new: false

@@ -2,10 +2,12 @@
 
 AI-powered shell command autocomplete and explanation tool.
 
+[![CI](https://github.com/traves/LineSense/workflows/CI/badge.svg)](https://github.com/traves/LineSense/actions)
 [![Tests](https://img.shields.io/badge/tests-107%20passing-success)](.)
 [![Coverage](https://img.shields.io/badge/coverage-90.7%25-brightgreen)](.)
 [![Go Version](https://img.shields.io/badge/go-1.21%2B-blue)](.)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+[![Go Report Card](https://goreportcard.com/badge/github.com/traves/LineSense)](https://goreportcard.com/report/github.com/traves/LineSense)
 
 ## Overview
 
@@ -51,84 +53,89 @@ LineSense is an intelligent shell assistant that provides context-aware command 
 
 ## Quick Start
 
+### Automated Installation (Recommended)
+
+The easiest way to install LineSense is using the automated installation script:
+
 ```bash
-# 1. Clone and build
-git clone <repo-url>
-cd LineSense
-go install ./cmd/linesense
+# Download and run the installer
+curl -fsSL https://raw.githubusercontent.com/traves/LineSense/main/install.sh | bash
+```
 
-# 2. Initialize configuration
-linesense config init
+This will:
+- ✅ Build and install LineSense
+- ✅ Set up shell integration (bash/zsh)
+- ✅ Initialize configuration
+- ✅ Guide you through API key setup
 
-# 3. Set your OpenRouter API key
-linesense config set-key YOUR_API_KEY_HERE
-# Or interactively (more secure):
-linesense config set-key
-
-# 4. Reload your shell
+**Then restart your shell and set your API key:**
+```bash
+# Restart your shell or reload config
 source ~/.bashrc  # or ~/.zshrc
 
-# 5. Try it out!
-linesense suggest --line "list files"
-linesense explain --line "rm -rf /"
-
-# 6. View your configuration
-linesense config show
+# Set your OpenRouter API key (interactive)
+linesense config set-key
 ```
 
-## Installation
+### Manual Installation
 
-### Prerequisites
+If you prefer to install manually or want more control:
+
+#### Prerequisites
 
 - Go 1.21 or later
+- Git
 - An OpenRouter API key (get one at https://openrouter.ai)
 
-### Build from Source
+#### Install from Source
 
 ```bash
-# Clone the repository
-git clone <repo-url>
+# 1. Clone the repository
+git clone https://github.com/traves/LineSense.git
 cd LineSense
 
-# Build the binary
-go build -o linesense ./cmd/linesense
-
-# Or install to $GOPATH/bin
+# 2. Build and install
 go install ./cmd/linesense
+
+# 3. Initialize configuration
+linesense config init
+
+# 4. Set your OpenRouter API key
+linesense config set-key
+
+# 5. Set up shell integration
+# For bash, add to ~/.bashrc:
+echo '[ -f "$HOME/.config/linesense/shell/linesense.bash" ] && source "$HOME/.config/linesense/shell/linesense.bash"' >> ~/.bashrc
+
+# For zsh, add to ~/.zshrc:
+echo '[ -f "$HOME/.config/linesense/shell/linesense.zsh" ] && source "$HOME/.config/linesense/shell/linesense.zsh"' >> ~/.zshrc
+
+# 6. Reload your shell
+source ~/.bashrc  # or ~/.zshrc
 ```
 
-### Configuration
+#### Alternative: Go Install
 
-1. Create configuration directory:
+Install directly from the repository:
+
 ```bash
-mkdir -p ~/.config/linesense
+go install github.com/traves/LineSense/cmd/linesense@latest
+linesense config init
+linesense config set-key
 ```
 
-2. Copy example configurations:
+### Verify Installation
+
 ```bash
-cp examples/config.toml ~/.config/linesense/
-cp examples/providers.toml ~/.config/linesense/
-```
+# Check version
+linesense --version
 
-3. Set your OpenRouter API key:
-```bash
-# For development: create a .env file
-echo "OPENROUTER_API_KEY=your-key-here" > .env
+# View configuration
+linesense config show
 
-# For production: set environment variable
-export OPENROUTER_API_KEY="your-api-key-here"
-```
-
-### Shell Integration
-
-For **bash**, add to your `~/.bashrc`:
-```bash
-source /path/to/linesense/scripts/linesense.bash
-```
-
-For **zsh**, add to your `~/.zshrc`:
-```bash
-source /path/to/linesense/scripts/linesense.zsh
+# Try it out!
+linesense suggest --line "list files sorted by size"
+linesense explain --line "docker ps -a"
 ```
 
 ## Usage
@@ -487,10 +494,42 @@ Comprehensive documentation is available in the [`docs/`](docs/) directory:
   - Writing new tests
   - Coverage goals and achievements (90.7% core, 84.8% config, 66.1% AI)
 
-## License
-
-TODO
+- **[CI_CD.md](docs/CI_CD.md)** - CI/CD and release process
+  - GitHub Actions workflows explained
+  - Continuous integration setup
+  - GoReleaser configuration
+  - Making releases
+  - Troubleshooting and best practices
 
 ## Contributing
 
-TODO
+We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
+
+### Quick Links
+
+- 🐛 [Report a Bug](https://github.com/traves/LineSense/issues/new)
+- 💡 [Request a Feature](https://github.com/traves/LineSense/issues/new)
+- 📖 [View Documentation](docs/)
+- 🧪 [Testing Guide](docs/TESTING.md)
+- 💬 [Join Discussions](https://github.com/traves/LineSense/discussions)
+
+### Development Quick Start
+
+```bash
+# Clone and setup
+git clone https://github.com/traves/LineSense.git
+cd LineSense
+go install ./cmd/linesense
+
+# Run tests
+go test ./...
+
+# Run tests with coverage
+go test -cover ./...
+```
+
+## License
+
+LineSense is released under the [MIT License](LICENSE).
+
+Copyright (c) 2024 LineSense Contributors

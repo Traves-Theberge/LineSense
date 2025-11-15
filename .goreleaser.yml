@@ -1,0 +1,205 @@
+version: 2
+
+before:
+  hooks:
+    # Run tests before building
+    - go test ./...
+    # Ensure dependencies are up to date
+    - go mod tidy
+
+builds:
+  - id: linesense
+    binary: linesense
+    main: ./cmd/linesense
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+      - arm
+    goarm:
+      - "7"
+    ignore:
+      - goos: windows
+        goarch: arm
+      - goos: windows
+        goarch: arm64
+    ldflags:
+      - -s -w
+      - -X main.version={{.Version}}
+      - -X main.commit={{.Commit}}
+      - -X main.date={{.Date}}
+      - -X main.builtBy=goreleaser
+
+archives:
+  - id: linesense-archive
+    format: tar.gz
+    name_template: >-
+      {{ .ProjectName }}_
+      {{- .Version }}_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
+    format_overrides:
+      - goos: windows
+        format: zip
+    files:
+      - README.md
+      - LICENSE
+      - CHANGELOG.md
+      - shell/linesense.bash
+      - shell/linesense.zsh
+      - examples/*.toml
+
+checksum:
+  name_template: 'checksums.txt'
+  algorithm: sha256
+
+snapshot:
+  name_template: "{{ incpatch .Version }}-next"
+
+changelog:
+  sort: asc
+  use: github
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+      - '^chore:'
+      - 'typo'
+  groups:
+    - title: Features
+      regexp: '^.*?feat(\([[:word:]]+\))??!?:.+$'
+      order: 0
+    - title: 'Bug Fixes'
+      regexp: '^.*?fix(\([[:word:]]+\))??!?:.+$'
+      order: 1
+    - title: 'Performance Improvements'
+      regexp: '^.*?perf(\([[:word:]]+\))??!?:.+$'
+      order: 2
+    - title: Others
+      order: 999
+
+release:
+  github:
+    owner: traves
+    name: LineSense
+  draft: false
+  prerelease: auto
+  mode: replace
+  header: |
+    ## LineSense {{ .Tag }}
+
+    Welcome to this new release of LineSense!
+
+    ### Installation
+
+    **Quick install with script:**
+    ```bash
+    curl -fsSL https://raw.githubusercontent.com/traves/LineSense/{{ .Tag }}/install.sh | bash
+    ```
+
+    **Or download a binary:**
+    Choose the appropriate binary for your system below.
+  footer: |
+    ---
+
+    **Full Changelog**: https://github.com/traves/LineSense/compare/{{ .PreviousTag }}...{{ .Tag }}
+
+    ### Questions or Feedback?
+    - 📖 [Documentation](https://github.com/traves/LineSense/blob/main/README.md)
+    - 🐛 [Report Issues](https://github.com/traves/LineSense/issues)
+    - 💬 [Discussions](https://github.com/traves/LineSense/discussions)
+
+# Homebrew tap (future)
+brews:
+  - repository:
+      owner: traves
+      name: homebrew-tap
+      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+    directory: Formula
+    homepage: https://github.com/traves/LineSense
+    description: AI-powered shell command suggestions and explanations
+    license: MIT
+    test: |
+      system "#{bin}/linesense --version"
+    install: |
+      bin.install "linesense"
+
+      # Install shell integration scripts
+      (prefix/"shell").install "shell/linesense.bash"
+      (prefix/"shell").install "shell/linesense.zsh"
+
+      # Install example configs
+      (prefix/"examples").install Dir["examples/*.toml"]
+    skip_upload: auto
+
+# Docker images (future)
+dockers:
+  - image_templates:
+      - "traves/linesense:{{ .Version }}-amd64"
+      - "traves/linesense:latest-amd64"
+    use: buildx
+    dockerfile: Dockerfile
+    build_flag_templates:
+      - "--platform=linux/amd64"
+      - "--label=org.opencontainers.image.created={{.Date}}"
+      - "--label=org.opencontainers.image.title={{.ProjectName}}"
+      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+      - "--label=org.opencontainers.image.version={{.Version}}"
+    skip_push: auto
+
+  - image_templates:
+      - "traves/linesense:{{ .Version }}-arm64"
+      - "traves/linesense:latest-arm64"
+    use: buildx
+    goarch: arm64
+    dockerfile: Dockerfile
+    build_flag_templates:
+      - "--platform=linux/arm64"
+      - "--label=org.opencontainers.image.created={{.Date}}"
+      - "--label=org.opencontainers.image.title={{.ProjectName}}"
+      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+      - "--label=org.opencontainers.image.version={{.Version}}"
+    skip_push: auto
+
+docker_manifests:
+  - name_template: traves/linesense:{{ .Version }}
+    image_templates:
+      - traves/linesense:{{ .Version }}-amd64
+      - traves/linesense:{{ .Version }}-arm64
+    skip_push: auto
+
+  - name_template: traves/linesense:latest
+    image_templates:
+      - traves/linesense:latest-amd64
+      - traves/linesense:latest-arm64
+    skip_push: auto
+
+# Announce releases (future)
+announce:
+  skip: '{{gt .Patch 0}}'  # Only announce major/minor releases
+
+# Metadata
+metadata:
+  mod_timestamp: '{{ .CommitTimestamp }}'
+
+# Signing (future)
+signs:
+  - artifacts: checksum
+    cmd: gpg
+    args:
+      - "--batch"
+      - "-u"
+      - "{{ .Env.GPG_FINGERPRINT }}"
+      - "--output"
+      - "${signature}"
+      - "--detach-sign"
+      - "${artifact}"
+    skip: true  # Enable when GPG key is set up
