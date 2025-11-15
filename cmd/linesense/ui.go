@@ -7,10 +7,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/traves/linesense/internal/core"
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/traves/linesense/internal/core"
 	"golang.org/x/term"
 )
 

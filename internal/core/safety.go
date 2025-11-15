@@ -18,31 +18,31 @@ const (
 
 // Built-in high-risk patterns (always checked)
 var builtinHighRiskPatterns = []string{
-	`rm\s+-rf\s+/`,         // rm -rf /
-	`dd\s+if=`,             // dd commands
-	`mkfs`,                 // filesystem formatting
-	`>\s*/dev/`,            // writing to device files
-	`chmod\s+777`,          // overly permissive permissions
-	`chmod\s+-R\s+777`,     // recursive 777
-	`curl.*\|\s*bash`,      // curl to bash
-	`wget.*\|\s*sh`,        // wget to shell
-	`:\(\)\{.*\};:`,        // fork bomb (escaped parens and braces)
-	`killall\s+-9`,         // force kill all
+	`rm\s+-rf\s+/`,     // rm -rf /
+	`dd\s+if=`,         // dd commands
+	`mkfs`,             // filesystem formatting
+	`>\s*/dev/`,        // writing to device files
+	`chmod\s+777`,      // overly permissive permissions
+	`chmod\s+-R\s+777`, // recursive 777
+	`curl.*\|\s*bash`,  // curl to bash
+	`wget.*\|\s*sh`,    // wget to shell
+	`:\(\)\{.*\};:`,    // fork bomb (escaped parens and braces)
+	`killall\s+-9`,     // force kill all
 }
 
 // Built-in medium-risk patterns
 var builtinMediumRiskPatterns = []string{
-	`sudo`,          // elevated privileges
-	`rm\s+`,         // file removal
-	`mv\s+`,         // file move
-	`chmod`,         // permission changes
-	`chown`,         // ownership changes
-	`kill`,          // process termination
-	`pkill`,         // process killing
-	`systemctl`,     // system service management
-	`reboot`,        // system reboot
-	`shutdown`,      // system shutdown
-	`iptables`,      // firewall changes
+	`sudo`,             // elevated privileges
+	`rm\s+`,            // file removal
+	`mv\s+`,            // file move
+	`chmod`,            // permission changes
+	`chown`,            // ownership changes
+	`kill`,             // process termination
+	`pkill`,            // process killing
+	`systemctl`,        // system service management
+	`reboot`,           // system reboot
+	`shutdown`,         // system shutdown
+	`iptables`,         // firewall changes
 	`apt-get\s+remove`, // package removal
 	`yum\s+remove`,     // package removal
 }

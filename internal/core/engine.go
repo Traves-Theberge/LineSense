@@ -9,9 +9,9 @@ import (
 // Suggestion represents a suggested command
 type Suggestion struct {
 	Command     string    `json:"command"`
-	Risk        RiskLevel `json:"risk"`        // "low" | "medium" | "high"
+	Risk        RiskLevel `json:"risk"` // "low" | "medium" | "high"
 	Explanation string    `json:"explanation"`
-	Source      string    `json:"source"`      // "llm" | "preset"
+	Source      string    `json:"source"` // "llm" | "preset"
 }
 
 // Explanation represents an explanation of a command

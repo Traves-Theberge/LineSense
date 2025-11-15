@@ -80,10 +80,10 @@ func (p *OpenRouterProvider) Explain(ctx context.Context, input core.ExplainInpu
 
 // OpenRouter API types
 type openRouterRequest struct {
-	Model       string                   `json:"model"`
-	Messages    []openRouterMessage      `json:"messages"`
-	Temperature float64                  `json:"temperature,omitempty"`
-	MaxTokens   int                      `json:"max_tokens,omitempty"`
+	Model       string              `json:"model"`
+	Messages    []openRouterMessage `json:"messages"`
+	Temperature float64             `json:"temperature,omitempty"`
+	MaxTokens   int                 `json:"max_tokens,omitempty"`
 }
 
 type openRouterMessage struct {

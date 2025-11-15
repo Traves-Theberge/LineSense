@@ -9,12 +9,12 @@ import (
 
 // ContextEnvelope is collected before each suggestion / explanation
 type ContextEnvelope struct {
-	Shell        string            `json:"shell"`                  // "bash" | "zsh"
-	Line         string            `json:"line"`                   // current input line
+	Shell        string            `json:"shell"` // "bash" | "zsh"
+	Line         string            `json:"line"`  // current input line
 	CWD          string            `json:"cwd"`
 	Git          *GitInfo          `json:"git,omitempty"`
-	Env          map[string]string `json:"env,omitempty"`          // filtered env (if enabled)
-	History      []HistoryEntry    `json:"history,omitempty"`      // last N commands
+	Env          map[string]string `json:"env,omitempty"`     // filtered env (if enabled)
+	History      []HistoryEntry    `json:"history,omitempty"` // last N commands
 	UsageSummary *UsageSummary     `json:"usage_summary,omitempty"`
 }
 

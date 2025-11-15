@@ -87,9 +87,9 @@ func TestApplySafetyFilters(t *testing.T) {
 
 	suggestions := []Suggestion{
 		{Command: "ls -la", Risk: RiskLow},
-		{Command: "rm -rf /", Risk: RiskLow},     // Should be blocked
+		{Command: "rm -rf /", Risk: RiskLow},         // Should be blocked
 		{Command: "sudo rm file.txt", Risk: RiskLow}, // Should be medium risk
-		{Command: "format disk", Risk: RiskLow},  // Should be high risk
+		{Command: "format disk", Risk: RiskLow},      // Should be high risk
 	}
 
 	filtered := ApplySafetyFilters(suggestions, cfg)
@@ -125,9 +125,9 @@ func TestIsBlocked_NilConfig(t *testing.T) {
 
 func TestValidateCommand(t *testing.T) {
 	tests := []struct {
-		name     string
-		command  string
-		wantErr  bool
+		name    string
+		command string
+		wantErr bool
 	}{
 		{"valid command", "ls -la", false},
 		{"empty command", "", false},

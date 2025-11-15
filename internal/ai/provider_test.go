@@ -15,10 +15,10 @@ func TestNewProvider_OpenRouter(t *testing.T) {
 			MaxTokens:   500,
 		},
 		OpenRouter: config.OpenRouterConfig{
-			Type:       "openrouter",
-			APIKeyEnv:  "TEST_API_KEY",
-			BaseURL:    "https://api.test.com",
-			TimeoutMs:  5000,
+			Type:      "openrouter",
+			APIKeyEnv: "TEST_API_KEY",
+			BaseURL:   "https://api.test.com",
+			TimeoutMs: 5000,
 		},
 	}
 

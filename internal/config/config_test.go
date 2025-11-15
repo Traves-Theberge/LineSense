@@ -3,6 +3,7 @@ package config
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -47,7 +48,7 @@ func TestGetConfigDir(t *testing.T) {
 				if !filepath.IsAbs(result) {
 					t.Errorf("GetConfigDir() should return absolute path, got %v", result)
 				}
-				if !filepath.HasPrefix(result, string(filepath.Separator)) {
+				if !strings.HasPrefix(result, string(filepath.Separator)) {
 					t.Errorf("GetConfigDir() should start with /, got %v", result)
 				}
 			}

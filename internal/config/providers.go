@@ -15,18 +15,18 @@ type ProvidersConfig struct {
 
 // ProfileConfig defines a provider profile
 type ProfileConfig struct {
-	Provider    string  `toml:"provider"`    // "openrouter"
-	Model       string  `toml:"model"`       // e.g. "openrouter/openai/gpt-4.1-mini"
+	Provider    string  `toml:"provider"` // "openrouter"
+	Model       string  `toml:"model"`    // e.g. "openrouter/openai/gpt-4.1-mini"
 	Temperature float64 `toml:"temperature"`
 	MaxTokens   int     `toml:"max_tokens"`
 }
 
 // OpenRouterConfig contains OpenRouter-specific settings
 type OpenRouterConfig struct {
-	Type       string `toml:"type"`        // "openrouter"
-	APIKeyEnv  string `toml:"api_key_env"` // e.g. "OPENROUTER_API_KEY"
-	BaseURL    string `toml:"base_url"`    // e.g. "https://openrouter.ai/api/v1"
-	TimeoutMs  int    `toml:"timeout_ms"`
+	Type      string `toml:"type"`        // "openrouter"
+	APIKeyEnv string `toml:"api_key_env"` // e.g. "OPENROUTER_API_KEY"
+	BaseURL   string `toml:"base_url"`    // e.g. "https://openrouter.ai/api/v1"
+	TimeoutMs int    `toml:"timeout_ms"`
 }
 
 // LoadProvidersConfig loads the providers config
