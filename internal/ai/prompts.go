@@ -9,19 +9,24 @@ import (
 
 // buildSuggestSystemPrompt creates the system prompt for command suggestions
 func buildSuggestSystemPrompt() string {
-	return `You are an expert shell command assistant. Your job is to suggest complete, correct shell commands based on the user's partial input and context.
+	return `You are an expert shell command assistant. Your job is to suggest 3-5 complete, correct shell commands based on the user's partial input and context.
 
 IMPORTANT RULES:
-1. Return ONLY the complete command, nothing else
-2. Make the command safe and appropriate
-3. Use the context (git info, history, cwd) to make intelligent suggestions
-4. If the input is already a complete command, suggest improvements or alternatives
-5. For ambiguous inputs, choose the most common/useful interpretation
-6. Prefer standard Unix/Linux commands
-7. Keep commands concise but complete
+1. Provide 3-5 alternative command suggestions (one per line)
+2. Order suggestions from most likely to least likely
+3. Make commands safe and appropriate
+4. Use the context (git info, history, cwd) to make intelligent suggestions
+5. If the input is already complete, suggest improvements or alternatives
+6. For ambiguous or typo inputs, interpret user intent and suggest corrections
+7. Prefer standard Unix/Linux commands
+8. Keep commands concise but complete
 
 RESPONSE FORMAT:
-Return only the command text, no explanations, no markdown, no extra formatting.`
+Return one command per line, no numbering, no explanations, no markdown.
+Example:
+ls -la
+find . -type f -name "*.txt"
+tree -L 2`
 }
 
 // buildSuggestUserPrompt creates the user prompt with context
@@ -102,36 +107,57 @@ func buildExplainUserPrompt(ctx *core.ContextEnvelope) string {
 // parseSuggestions extracts command suggestions from AI response
 func parseSuggestions(response string, originalLine string) []core.Suggestion {
 	// Clean up the response
-	command := strings.TrimSpace(response)
+	cleaned := strings.TrimSpace(response)
 
 	// Remove markdown code blocks if present
-	command = strings.TrimPrefix(command, "```bash")
-	command = strings.TrimPrefix(command, "```sh")
-	command = strings.TrimPrefix(command, "```")
-	command = strings.TrimSuffix(command, "```")
-	command = strings.TrimSpace(command)
+	cleaned = strings.TrimPrefix(cleaned, "```bash")
+	cleaned = strings.TrimPrefix(cleaned, "```sh")
+	cleaned = strings.TrimPrefix(cleaned, "```")
+	cleaned = strings.TrimSuffix(cleaned, "```")
+	cleaned = strings.TrimSpace(cleaned)
 
-	// Take only the first line if multiple lines returned
-	if idx := strings.Index(command, "\n"); idx > 0 {
-		command = command[:idx]
-	}
+	// Split by lines to get multiple suggestions
+	lines := strings.Split(cleaned, "\n")
 
-	// If empty, return empty list
-	if command == "" {
-		return []core.Suggestion{}
-	}
+	var suggestions []core.Suggestion
+	for _, line := range lines {
+		command := strings.TrimSpace(line)
 
-	// Create suggestion with basic risk assessment
-	risk := assessRisk(command)
+		// Skip empty lines
+		if command == "" {
+			continue
+		}
 
-	return []core.Suggestion{
-		{
+		// Skip numbered lines (in case AI added numbering)
+		command = strings.TrimPrefix(command, "1. ")
+		command = strings.TrimPrefix(command, "2. ")
+		command = strings.TrimPrefix(command, "3. ")
+		command = strings.TrimPrefix(command, "4. ")
+		command = strings.TrimPrefix(command, "5. ")
+		command = strings.TrimSpace(command)
+
+		// Skip if still empty after cleanup
+		if command == "" {
+			continue
+		}
+
+		// Create suggestion with risk assessment
+		risk := assessRisk(command)
+
+		suggestions = append(suggestions, core.Suggestion{
 			Command:     command,
 			Risk:        risk,
 			Explanation: fmt.Sprintf("Suggested based on: %s", originalLine),
 			Source:      "llm",
-		},
+		})
+
+		// Limit to 5 suggestions max
+		if len(suggestions) >= 5 {
+			break
+		}
 	}
+
+	return suggestions
 }
 
 // parseExplanation extracts explanation from AI response
