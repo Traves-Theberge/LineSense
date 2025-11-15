@@ -1,7 +1,5 @@
 package core
 
-import "time"
-
 // UsageEvent represents a single usage log entry
 // Stored at ~/.config/linesense/usage.log
 type UsageEvent struct {
@@ -31,7 +29,3 @@ func BuildUsageSummary(_ string) (*UsageSummary, error) {
 	panic("not implemented")
 }
 
-// newTimestamp returns the current time in ISO 8601 format
-func newTimestamp() string {
-	return time.Now().UTC().Format(time.RFC3339)
-}
