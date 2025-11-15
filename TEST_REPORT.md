@@ -1,7 +1,10 @@
 # LineSense Manual Testing Report
 
+> **Note:** This document was created for v0.3.0 testing. Current version is v0.4.0.
+> This file is kept for historical reference.
+
 **Date:** November 14, 2025
-**Version:** 0.1.0
+**Version:** 0.3.0
 **Tester:** Automated + Manual Verification
 **Platform:** Linux (Arch-based)
 

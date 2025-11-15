@@ -133,7 +133,7 @@ Progress tracker for v1.0 release and beyond.
 ### Release Preparation
 
 - [ ] Version bump
-  - [ ] Update version in `main.go` (currently 0.1.0)
+  - [x] Update version in `main.go` (updated to 0.4.0) ✓
   - [ ] Update CHANGELOG.md
   - [ ] Tag release (v1.0.0)
 - [ ] Release checklist

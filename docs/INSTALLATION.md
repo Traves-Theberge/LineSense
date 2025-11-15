@@ -211,7 +211,7 @@ Test your installation to ensure everything works:
 
 ```bash
 linesense version
-# Should output: linesense version 0.1.0
+# Should output: linesense version 0.4.0
 ```
 
 ### 2. View Configuration

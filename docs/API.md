@@ -473,7 +473,7 @@ linesense -v
 
 **Output:**
 ```
-linesense version 0.1.0
+linesense version 0.4.0
 ```
 
 **Exit Codes:**

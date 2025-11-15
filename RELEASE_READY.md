@@ -1,6 +1,9 @@
 # LineSense - Release Ready! 🚀
 
-**Status:** ✅ READY FOR v0.3.0 RELEASE
+> **Note:** This document was created for v0.3.0 release. Current version is v0.4.0.
+> This file is kept for historical reference.
+
+**Status:** ✅ READY FOR v0.3.0 RELEASE (COMPLETED)
 **Date:** November 14, 2025
 
 ## Executive Summary
