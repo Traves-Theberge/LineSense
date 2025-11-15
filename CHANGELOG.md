@@ -7,6 +7,46 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2025-11-14
+
+### Added
+- **Beautiful UI with Charm Libraries**
+  - Integrated Charm Bubbles for animated loading spinner
+  - Added Lipgloss for stunning styled output with colors
+  - Rounded borders and boxes for professional appearance
+  - Color-coded risk levels (green/yellow/red indicators)
+  - Professional typography with proper spacing
+  - Icons for different sections (💡 suggestions, 📖 explanations)
+- **New Output Formatting**
+  - `--format` flag to choose between 'pretty' (default) or 'json'
+  - Pretty format with styled suggestions and explanations
+  - Boxed content with visual hierarchy
+  - Numbered suggestion lists with risk indicators
+  - Dynamic terminal width detection and text wrapping
+- **Loading Indicators**
+  - Animated spinner while AI is processing
+  - Context-aware messages ("Generating suggestions...", "Analyzing command...")
+  - Graceful fallback in non-interactive environments
+- **Comprehensive Testing**
+  - End-to-end test suite (test_e2e.sh)
+  - Shell integration validation (test_integration.sh)
+  - Performance benchmarking
+  - Safety filter testing
+
+### Changed
+- Pretty output is now the default format (was JSON)
+- Terminal width automatically adjusts to screen size
+- Text wraps properly within borders (min: 40, max: 100 chars)
+- Removed old ANSI color codes in favor of Lipgloss styling
+- Cleaner spinner messages without emojis
+
+### Technical
+- Added charmbracelet/bubbles dependency for spinner
+- Added charmbracelet/lipgloss dependency for styling
+- Added golang.org/x/term for terminal size detection
+- Refactored output logic into separate ui.go file
+- Improved error handling in non-TTY environments
+
 ## [0.3.0] - 2025-11-14
 
 ### Added
