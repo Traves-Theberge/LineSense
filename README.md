@@ -263,10 +263,10 @@ source ~/.config/linesense/shell/linesense.bash
 
 **Features:**
 - 🔇 Silent loading - no startup messages or output
-- 🎨 Color-coded risk indicators (🟢 low, 🟡 medium, 🔴 high)
-- 🔧 Smart JSON parsing with jq (falls back to grep/sed if jq is not installed)
-- 📝 Formatted explanation output with command breakdown
-- 🧠 Context-aware suggestions based on current directory, git status, and history
+- 🎨 Beautiful UI - same styled output as the CLI (boxes, colors, borders)
+- 💡 Smart suggestions - handles typos and provides intent-based alternatives
+- 📖 Detailed explanations - comprehensive command breakdowns with risk assessment
+- 🧠 Context-aware - uses current directory, git status, and shell history
 
 ## Configuration
 

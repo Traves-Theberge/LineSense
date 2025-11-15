@@ -9,19 +9,6 @@ if ! command -v linesense &> /dev/null; then
     return 1
 fi
 
-# Function to parse JSON (uses jq if available, falls back to grep/sed)
-_linesense_parse_json() {
-    local json="$1"
-    local key="$2"
-
-    if command -v jq &> /dev/null; then
-        echo "$json" | jq -r "$key" 2>/dev/null
-    else
-        # Fallback: basic grep/sed parsing (works for simple cases)
-        echo "$json" | grep -o "\"$key\":\"[^\"]*\"" | head -1 | sed "s/\"$key\":\"\(.*\)\"/\1/"
-    fi
-}
-
 # Function to request a suggestion from linesense
 _linesense_request() {
     local current_line="$READLINE_LINE"
@@ -32,33 +19,14 @@ _linesense_request() {
         return
     fi
 
-    # Call linesense suggest and capture JSON output
-    local result
-    result=$(linesense suggest --shell bash --line "$current_line" --cwd "$cwd" 2>/dev/null)
+    # Clear line and show the pretty output
+    echo "" >&2
 
-    if [ $? -eq 0 ] && [ -n "$result" ]; then
-        # Parse JSON and extract first suggestion
-        local suggestion risk
+    # Call linesense suggest with pretty format
+    linesense suggest --shell bash --line "$current_line" --cwd "$cwd" --format pretty
 
-        if command -v jq &> /dev/null; then
-            suggestion=$(echo "$result" | jq -r '.suggestions[0].command' 2>/dev/null)
-            risk=$(echo "$result" | jq -r '.suggestions[0].risk' 2>/dev/null)
-        else
-            suggestion=$(echo "$result" | grep -o '"command":"[^"]*"' | head -1 | sed 's/"command":"\(.*\)"/\1/')
-            risk=$(echo "$result" | grep -o '"risk":"[^"]*"' | head -1 | sed 's/"risk":"\(.*\)"/\1/')
-        fi
-
-        if [ -n "$suggestion" ] && [ "$suggestion" != "null" ]; then
-            # Show risk indicator for high-risk commands
-            if [ "$risk" = "high" ]; then
-                echo -e "\n⚠️  WARNING: High-risk command detected!" >&2
-            fi
-
-            # Replace current line with suggestion
-            READLINE_LINE="$suggestion"
-            READLINE_POINT=${#READLINE_LINE}
-        fi
-    fi
+    # Note: We display the suggestions but don't auto-replace the line
+    # User can manually copy the command they want
 }
 
 # Function to explain the current command
@@ -71,54 +39,11 @@ _linesense_explain() {
         return
     fi
 
-    # Save cursor position and clear line
-    echo -ne "\r\033[K" >&2
+    # Clear line and show the pretty output
+    echo "" >&2
 
-    # Call linesense explain and capture JSON output
-    local result
-    result=$(linesense explain --shell bash --line "$current_line" --cwd "$cwd" 2>/dev/null)
-
-    if [ $? -eq 0 ] && [ -n "$result" ]; then
-        local summary risk
-
-        if command -v jq &> /dev/null; then
-            summary=$(echo "$result" | jq -r '.summary' 2>/dev/null)
-            risk=$(echo "$result" | jq -r '.risk' 2>/dev/null)
-        else
-            summary=$(echo "$result" | grep -o '"summary":"[^"]*"' | head -1 | sed 's/"summary":"\(.*\)"/\1/')
-            risk=$(echo "$result" | grep -o '"risk":"[^"]*"' | head -1 | sed 's/"risk":"\(.*\)"/\1/')
-        fi
-
-        # Display formatted explanation
-        echo "" >&2
-        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" >&2
-        echo "📝 LineSense Explanation" >&2
-        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" >&2
-        echo "" >&2
-        echo "Command: $current_line" >&2
-        echo "" >&2
-
-        # Color-code risk level
-        case "$risk" in
-            high)
-                echo -e "⚠️  Risk: \033[1;31mHIGH\033[0m" >&2
-                ;;
-            medium)
-                echo -e "⚠️  Risk: \033[1;33mMEDIUM\033[0m" >&2
-                ;;
-            low)
-                echo -e "✓ Risk: \033[1;32mLOW\033[0m" >&2
-                ;;
-        esac
-
-        echo "" >&2
-        echo "$summary" >&2
-        echo "" >&2
-        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" >&2
-        echo "" >&2
-    else
-        echo "❌ Failed to get explanation" >&2
-    fi
+    # Call linesense explain with pretty format
+    linesense explain --shell bash --line "$current_line" --cwd "$cwd" --format pretty
 }
 
 # Default keybindings
