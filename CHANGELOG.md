@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.2] - 2025-11-15
+
+### Changed
+- **Beautiful Shell Integration**
+  - Shell integration now uses the same beautiful UI as the CLI (`--format pretty`)
+  - Removed custom JSON parsing and formatting code
+  - Suggestions display full styled output with boxes, colors, and borders
+  - Explanations show the same professional format as CLI
+  - Simplified explain keybinding from Ctrl+X Ctrl+E to just Ctrl+X
+
+### Improved
+- **Better Typo Handling**
+  - Shell integration now handles typos intelligently with intent-based suggestions
+  - Multiple suggestion options displayed (not just auto-replacement)
+  - All CLI features automatically available in shell integration
+
+### Removed
+- Removed `_linesense_parse_json` function (no longer needed)
+- Removed jq dependency for shell integration
+- Removed custom formatting code (delegates to CLI)
+
 ## [0.4.1] - 2025-11-15
 
 ### Fixed
