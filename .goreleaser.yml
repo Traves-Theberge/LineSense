@@ -37,7 +37,6 @@ builds:
 
 archives:
   - id: linesense-archive
-    format: tar.gz
     name_template: >-
       {{ .ProjectName }}_
       {{- .Version }}_
@@ -46,6 +45,8 @@ archives:
       {{- else if eq .Arch "386" }}i386
       {{- else }}{{ .Arch }}{{ end }}
       {{- if .Arm }}v{{ .Arm }}{{ end }}
+    builds:
+      - linesense
     format_overrides:
       - goos: windows
         format: zip
@@ -53,8 +54,8 @@ archives:
       - README.md
       - LICENSE
       - CHANGELOG.md
-      - shell/linesense.bash
-      - shell/linesense.zsh
+      - scripts/linesense.bash
+      - scripts/linesense.zsh
       - examples/*.toml
 
 checksum:
@@ -62,7 +63,7 @@ checksum:
   algorithm: sha256
 
 snapshot:
-  name_template: "{{ incpatch .Version }}-next"
+  version_template: "{{ incpatch .Version }}-next"
 
 changelog:
   sort: asc
@@ -133,8 +134,8 @@ brews:
       bin.install "linesense"
 
       # Install shell integration scripts
-      (prefix/"shell").install "shell/linesense.bash"
-      (prefix/"shell").install "shell/linesense.zsh"
+      (prefix/"scripts").install "scripts/linesense.bash"
+      (prefix/"scripts").install "scripts/linesense.zsh"
 
       # Install example configs
       (prefix/"examples").install Dir["examples/*.toml"]
@@ -190,16 +191,15 @@ announce:
 metadata:
   mod_timestamp: '{{ .CommitTimestamp }}'
 
-# Signing (future)
-signs:
-  - artifacts: checksum
-    cmd: gpg
-    args:
-      - "--batch"
-      - "-u"
-      - "{{ .Env.GPG_FINGERPRINT }}"
-      - "--output"
-      - "${signature}"
-      - "--detach-sign"
-      - "${artifact}"
-    skip: true  # Enable when GPG key is set up
+# Signing (future) - Uncomment when GPG key is set up
+# signs:
+#   - artifacts: checksum
+#     cmd: gpg
+#     args:
+#       - "--batch"
+#       - "-u"
+#       - "{{ .Env.GPG_FINGERPRINT }}"
+#       - "--output"
+#       - "${signature}"
+#       - "--detach-sign"
+#       - "${artifact}"

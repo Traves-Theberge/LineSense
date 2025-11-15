@@ -174,8 +174,8 @@ install_shell_integration() {
     local integration_dir="$CONFIG_DIR/shell"
     mkdir -p "$integration_dir"
 
-    if [ -f "shell/linesense.$shell_name" ]; then
-        cp "shell/linesense.$shell_name" "$integration_dir/"
+    if [ -f "scripts/linesense.$shell_name" ]; then
+        cp "scripts/linesense.$shell_name" "$integration_dir/"
         chmod +x "$integration_dir/linesense.$shell_name"
         success "Shell integration script copied to $integration_dir"
     else
