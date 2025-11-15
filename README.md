@@ -403,7 +403,7 @@ denylist = [
 
 LineSense is **production-ready** with beautiful terminal UI and full shell integration! All core features are implemented and tested.
 
-**Current Version: v0.4.2** - Beautiful Shell Integration
+**Current Version: v0.4.3** - Multiple Command Suggestions
 
 ### ✅ Phase 1: Core Infrastructure & CLI - **COMPLETE**
 

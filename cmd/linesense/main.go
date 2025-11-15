@@ -15,7 +15,7 @@ import (
 	"github.com/traves/linesense/internal/core"
 )
 
-const version = "0.4.2"
+const version = "0.4.3"
 
 func main() {
 	// Try to load .env file (silently ignore if not present)

@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.3] - 2025-11-15
+
+### Added
+- **Multiple Command Suggestions**
+  - Now returns 3-5 alternative command suggestions instead of just one
+  - Suggestions ordered from most likely to least likely
+  - Better handling of typos and ambiguous inputs with intent interpretation
+  - Each suggestion gets independent risk assessment
+
+### Improved
+- **Smarter AI Prompts**
+  - Updated system prompt to request multiple suggestions
+  - Added explicit guidance for typo/intent interpretation
+  - Better structured response format (one command per line)
+
+### Technical
+- Rewrote `parseSuggestions()` to handle multiple line-separated commands
+- Added robustness with numbered list stripping (1. 2. 3. etc.)
+- Limited to max 5 suggestions to avoid overwhelming users
+
 ## [0.4.2] - 2025-11-15
 
 ### Changed
