@@ -330,7 +330,7 @@ func runConfigInit() error {
 		var response string
 		_, _ = fmt.Scanln(&response)
 		if strings.ToLower(response) != "y" {
-			return fmt.Errorf("configuration setup cancelled")
+			return fmt.Errorf("configuration setup canceled")
 		}
 	}
 
@@ -425,7 +425,7 @@ func runConfigSetKey(args []string) error {
 		var response string
 		_, _ = fmt.Scanln(&response)
 		if strings.ToLower(response) != "y" {
-			return fmt.Errorf("API key setup cancelled")
+			return fmt.Errorf("API key setup canceled")
 		}
 
 		// Remove old line
@@ -567,4 +567,3 @@ func copyFile(src, dst string) error {
 	}
 	return os.WriteFile(dst, content, 0600)
 }
-

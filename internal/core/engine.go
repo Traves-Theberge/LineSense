@@ -57,7 +57,7 @@ func NewEngine(cfg *config.Config, provider Provider) *Engine {
 }
 
 // Suggest generates command suggestions
-func (e *Engine) Suggest(_ context.Context, _ string, line, cwd string) ([]Suggestion, error) {
+func (e *Engine) Suggest(_ context.Context, _ string, _ string, _ string) ([]Suggestion, error) {
 	// TODO: Build context envelope
 	// TODO: Build prompt for suggestions
 	// TODO: Call provider.Suggest
@@ -67,7 +67,7 @@ func (e *Engine) Suggest(_ context.Context, _ string, line, cwd string) ([]Sugge
 }
 
 // Explain generates an explanation for a command
-func (e *Engine) Explain(_ context.Context, _ string, line, cwd string) (Explanation, error) {
+func (e *Engine) Explain(_ context.Context, _ string, _ string, _ string) (Explanation, error) {
 	// TODO: Build context envelope
 	// TODO: Build prompt for explanation
 	// TODO: Call provider.Explain

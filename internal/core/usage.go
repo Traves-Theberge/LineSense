@@ -28,4 +28,3 @@ func BuildUsageSummary(_ string) (*UsageSummary, error) {
 	// TODO: Return nil if usage log doesn't exist
 	panic("not implemented")
 }
-

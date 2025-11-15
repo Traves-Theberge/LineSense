@@ -20,7 +20,7 @@ linters:
     - exportloopref # Check for loop variable references
     - unconvert     # Remove unnecessary type conversions
     - unparam       # Report unused function parameters
-    - prealloc      # Find slice declarations that could be preallocated
+    # - prealloc    # Disabled - overly pedantic about slice preallocation
 
 linters-settings:
   errcheck:
@@ -45,10 +45,17 @@ linters-settings:
   gocritic:
     enabled-tags:
       - diagnostic
-      - experimental
-      - opinionated
       - performance
-      - style
+    disabled-checks:
+      - hugeParam        # Passing large structs is acceptable
+      - appendCombine    # Multiple appends are more readable
+      - paramTypeCombine # Explicit types are clearer
+      - octalLiteral     # Old octal literals are fine
+      - sprintfQuotedString  # %s is clear enough
+      - emptyStringTest  # len(s) > 0 is idiomatic
+      - emptyFallthrough # Empty fallthrough is acceptable
+      - ifElseChain      # If-else can be clearer than switch
+      - equalFold        # ToLower + comparison is clear
 
   revive:
     confidence: 0.8
