@@ -49,23 +49,19 @@ func BuildContext(shell, line, cwd string, cfg *config.Config) (*ContextEnvelope
 	// Collect git context if enabled
 	if cfg.Context.IncludeGit {
 		gitInfo, err := CollectGitInfo(cwd)
-		if err != nil {
-			// Log error but don't fail - git info is optional
-			// TODO: Add logging
-		} else if gitInfo != nil {
+		if err == nil && gitInfo != nil {
 			ctx.Git = gitInfo
 		}
+		// Silently ignore errors - git info is optional
 	}
 
 	// Collect shell history if enabled
 	if cfg.Context.HistoryLength > 0 {
 		history, err := CollectHistory(shell, cfg.Context.HistoryLength)
-		if err != nil {
-			// Log error but don't fail - history is optional
-			// TODO: Add logging
-		} else if len(history) > 0 {
+		if err == nil && len(history) > 0 {
 			ctx.History = history
 		}
+		// Silently ignore errors - history is optional
 	}
 
 	// Collect environment variables if enabled

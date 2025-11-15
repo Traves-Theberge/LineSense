@@ -73,7 +73,8 @@ func ClassifyRisk(command string, cfg *config.SafetyConfig) RiskLevel {
 
 	// Check high-risk patterns first
 	for _, pattern := range builtinHighRiskPatterns {
-		if matched, _ := regexp.MatchString(pattern, commandLower); matched {
+		matched, err := regexp.MatchString(pattern, commandLower)
+		if err == nil && matched {
 			return RiskHigh
 		}
 	}
@@ -81,7 +82,8 @@ func ClassifyRisk(command string, cfg *config.SafetyConfig) RiskLevel {
 	// Check config-defined high-risk patterns
 	if cfg != nil {
 		for _, pattern := range cfg.RequireConfirmPatterns {
-			if matched, _ := regexp.MatchString(pattern, commandLower); matched {
+			matched, err := regexp.MatchString(pattern, commandLower)
+			if err == nil && matched {
 				return RiskHigh
 			}
 		}
@@ -89,7 +91,8 @@ func ClassifyRisk(command string, cfg *config.SafetyConfig) RiskLevel {
 
 	// Check medium-risk patterns
 	for _, pattern := range builtinMediumRiskPatterns {
-		if matched, _ := regexp.MatchString(pattern, commandLower); matched {
+		matched, err := regexp.MatchString(pattern, commandLower)
+		if err == nil && matched {
 			return RiskMedium
 		}
 	}
@@ -108,7 +111,8 @@ func IsBlocked(command string, cfg *config.SafetyConfig) bool {
 
 	// Check against denylist patterns
 	for _, pattern := range cfg.Denylist {
-		if matched, _ := regexp.MatchString(pattern, commandLower); matched {
+		matched, err := regexp.MatchString(pattern, commandLower)
+		if err == nil && matched {
 			return true
 		}
 	}

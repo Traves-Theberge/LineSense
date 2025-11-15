@@ -20,7 +20,7 @@ const version = "0.4.0"
 func main() {
 	// Try to load .env file (silently ignore if not present)
 	if cwd, err := os.Getwd(); err == nil {
-		godotenv.Load(filepath.Join(cwd, ".env"))
+		_ = godotenv.Load(filepath.Join(cwd, ".env"))
 	}
 
 	if err := run(); err != nil {
@@ -328,7 +328,7 @@ func runConfigInit() error {
 		fmt.Println("⚠️  Configuration files already exist.")
 		fmt.Print("Do you want to overwrite them? (y/N): ")
 		var response string
-		fmt.Scanln(&response)
+		_, _ = fmt.Scanln(&response)
 		if strings.ToLower(response) != "y" {
 			return fmt.Errorf("configuration setup cancelled")
 		}
@@ -388,7 +388,7 @@ func runConfigSetKey(args []string) error {
 	} else {
 		// Read from stdin (more secure)
 		fmt.Print("Enter your OpenRouter API key: ")
-		fmt.Scanln(&apiKey)
+		_, _ = fmt.Scanln(&apiKey)
 	}
 
 	if apiKey == "" {
@@ -423,7 +423,7 @@ func runConfigSetKey(args []string) error {
 		fmt.Printf("⚠️  OPENROUTER_API_KEY already exists in %s\n", rcFile)
 		fmt.Print("Do you want to update it? (y/N): ")
 		var response string
-		fmt.Scanln(&response)
+		_, _ = fmt.Scanln(&response)
 		if strings.ToLower(response) != "y" {
 			return fmt.Errorf("API key setup cancelled")
 		}

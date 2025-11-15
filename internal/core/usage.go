@@ -13,7 +13,7 @@ type UsageEvent struct {
 }
 
 // LogUsage appends a usage event to the usage log
-func LogUsage(event UsageEvent) error {
+func LogUsage(_ UsageEvent) error {
 	// TODO: Resolve usage log path (~/.config/linesense/usage.log)
 	// TODO: Ensure directory exists
 	// TODO: Append JSON line to usage log
@@ -21,7 +21,7 @@ func LogUsage(event UsageEvent) error {
 }
 
 // BuildUsageSummary creates a summary of usage patterns for a given cwd
-func BuildUsageSummary(cwd string) (*UsageSummary, error) {
+func BuildUsageSummary(_ string) (*UsageSummary, error) {
 	// TODO: Read usage log
 	// TODO: Filter events by cwd
 	// TODO: Count command frequency
