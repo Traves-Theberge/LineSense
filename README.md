@@ -15,11 +15,14 @@ LineSense is an intelligent shell assistant that provides context-aware command 
 
 ## Features
 
-- **Context-Aware Suggestions**: Uses git info, shell history, and environment
-- **Safety First**: Risk classification and configurable denylists
-- **Multi-Shell Support**: Works with bash and zsh
-- **Adaptive Learning**: Learns from your command usage patterns
-- **OpenRouter Integration**: Powered by state-of-the-art LLMs via OpenRouter
+- **🎨 Beautiful Terminal UI**: Styled output with colors, borders, and dynamic width adjustment
+- **🔄 Dual Output Modes**: Pretty format for humans, JSON for scripting (`--format` flag)
+- **⚡ Loading Indicators**: Animated spinner while AI processes your request
+- **🧠 Context-Aware Suggestions**: Uses git info, shell history, and environment
+- **🛡️ Safety First**: Risk classification and configurable denylists
+- **🐚 Multi-Shell Support**: Works with bash and zsh
+- **🚀 OpenRouter Integration**: Powered by state-of-the-art LLMs via OpenRouter
+- **📏 Responsive Design**: Output automatically adapts to terminal width
 
 ## Project Structure
 
@@ -27,7 +30,8 @@ LineSense is an intelligent shell assistant that provides context-aware command 
 .
 ├── cmd/
 │   └── linesense/          # Main CLI binary
-│       └── main.go
+│       ├── main.go         # CLI entry point
+│       └── ui.go           # Terminal UI (Lipgloss/Bubbletea)
 ├── internal/
 │   ├── config/             # Configuration loading
 │   │   ├── config.go       # Global config
@@ -48,6 +52,13 @@ LineSense is an intelligent shell assistant that provides context-aware command 
 ├── examples/
 │   ├── config.toml         # Example global config
 │   └── providers.toml      # Example providers config
+├── docs/                   # Comprehensive documentation
+│   ├── INSTALLATION.md     # Installation guide
+│   ├── CONFIGURATION.md    # Configuration reference
+│   ├── SECURITY.md         # Security features
+│   ├── API.md              # CLI reference
+│   ├── TESTING.md          # Testing guide
+│   └── CI_CD.md            # CI/CD and release process
 └── PRD.md                  # Product requirements document
 ```
 
@@ -59,7 +70,7 @@ The easiest way to install LineSense is using the automated installation script:
 
 ```bash
 # Download and run the installer
-curl -fsSL https://raw.githubusercontent.com/traves/LineSense/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/traves-theberge/LineSense/main/install.sh | bash
 ```
 
 This will:
@@ -147,12 +158,32 @@ LineSense provides two main commands:
 #### Suggest Command
 Generate command suggestions based on natural language input:
 ```bash
+# Pretty output (default) - beautiful terminal UI
 linesense suggest --line "list files"
+
+# JSON output for scripting
+linesense suggest --line "list files" --format json
+
+# Advanced options
 linesense suggest --line "find large files" --cwd /var/log
 linesense suggest --line "git com" --model openai/gpt-4o
 ```
 
-Output:
+**Pretty Output** (default):
+```
+💡 Command Suggestions
+────────────────────────────────────────────────────────────────────────────────
+
+1. ls -lhS
+   ✓ Risk: low
+   Lists files in long format, human-readable sizes, sorted by size
+
+2. find . -type f -exec du -h {} + | sort -rh | head -20
+   ⚠ Risk: medium
+   Finds and sorts the 20 largest files recursively
+```
+
+**JSON Output** (`--format json`):
 ```json
 {
   "suggestions": [
@@ -169,18 +200,45 @@ Output:
 #### Explain Command
 Get detailed explanations of commands:
 ```bash
-linesense explain --line "rm -rf /"
+# Pretty output (default) - beautiful terminal UI
 linesense explain --line "docker ps -a"
+
+# JSON output for scripting
+linesense explain --line "docker ps -a" --format json
 ```
 
-Output:
+**Pretty Output** (default):
+```
+📖 Command Explanation
+────────────────────────────────────────────────────────────────────────────────
+
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ Summary                                                                      │
+│                                                                              │
+│ Lists all Docker containers (running and stopped) with their details        │
+╰──────────────────────────────────────────────────────────────────────────────╯
+
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ ✓ Risk Level: low                                                           │
+╰──────────────────────────────────────────────────────────────────────────────╯
+
+Details
+
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ What it does                                                                 │
+│ - Shows container ID, image, command, status, ports, and names              │
+│ - The -a flag includes stopped containers                                   │
+╰──────────────────────────────────────────────────────────────────────────────╯
+```
+
+**JSON Output** (`--format json`):
 ```json
 {
-  "summary": "The `rm -rf /` command recursively and forcefully removes all files...",
-  "risk": "high",
+  "summary": "Lists all Docker containers (running and stopped)...",
+  "risk": "low",
   "notes": [
-    "This command is extremely dangerous...",
-    "Important Flags: -r: Recursively delete..."
+    "What it does",
+    "- Shows container ID, image, command..."
   ]
 }
 ```
@@ -342,7 +400,9 @@ denylist = [
 
 ## Development Status
 
-LineSense is **production-ready** for CLI usage with full shell integration! All core features are implemented and tested.
+LineSense is **production-ready** with beautiful terminal UI and full shell integration! All core features are implemented and tested.
+
+**Current Version: v0.4.0** - Beautiful UI with Charm Libraries
 
 ### ✅ Phase 1: Core Infrastructure & CLI - **COMPLETE**
 
@@ -408,6 +468,24 @@ LineSense is **production-ready** for CLI usage with full shell integration! All
    - ✅ API key masking in output
    - ✅ Confirmation prompts before overwriting
    - ✅ Auto-detection of user's shell
+
+### ✅ Phase 2.7: Beautiful UI & UX - **COMPLETE (v0.4.0)**
+
+1. **Terminal UI with Charm Libraries**
+   - ✅ Integrated Lipgloss for beautiful styled output
+   - ✅ Integrated Bubbles for animated spinner
+   - ✅ Integrated Bubbletea for TUI framework
+   - ✅ Color-coded risk levels (green/yellow/red)
+   - ✅ Rounded borders and professional typography
+   - ✅ Dynamic terminal width detection
+   - ✅ Responsive text wrapping (min: 40, max: 100 chars)
+
+2. **Output Formatting**
+   - ✅ Dual format support: `--format pretty` (default) and `--format json`
+   - ✅ Beautiful command suggestions with styled boxes
+   - ✅ Detailed explanations with sections and headers
+   - ✅ Loading spinner during AI processing
+   - ✅ Clean, readable output on any terminal size
 
 ## Testing & Quality Assurance
 
