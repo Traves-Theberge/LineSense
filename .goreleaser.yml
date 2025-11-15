@@ -141,47 +141,47 @@ brews:
       (prefix/"examples").install Dir["examples/*.toml"]
     skip_upload: auto
 
-# Docker images (future)
-dockers:
-  - image_templates:
-      - "traves/linesense:{{ .Version }}-amd64"
-      - "traves/linesense:latest-amd64"
-    use: buildx
-    dockerfile: Dockerfile
-    build_flag_templates:
-      - "--platform=linux/amd64"
-      - "--label=org.opencontainers.image.created={{.Date}}"
-      - "--label=org.opencontainers.image.title={{.ProjectName}}"
-      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
-      - "--label=org.opencontainers.image.version={{.Version}}"
-    skip_push: auto
+# Docker images (future) - Commented out until Dockerfile is created
+# dockers:
+#   - image_templates:
+#       - "traves/linesense:{{ .Version }}-amd64"
+#       - "traves/linesense:latest-amd64"
+#     use: buildx
+#     dockerfile: Dockerfile
+#     build_flag_templates:
+#       - "--platform=linux/amd64"
+#       - "--label=org.opencontainers.image.created={{.Date}}"
+#       - "--label=org.opencontainers.image.title={{.ProjectName}}"
+#       - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+#       - "--label=org.opencontainers.image.version={{.Version}}"
+#     skip_push: auto
 
-  - image_templates:
-      - "traves/linesense:{{ .Version }}-arm64"
-      - "traves/linesense:latest-arm64"
-    use: buildx
-    goarch: arm64
-    dockerfile: Dockerfile
-    build_flag_templates:
-      - "--platform=linux/arm64"
-      - "--label=org.opencontainers.image.created={{.Date}}"
-      - "--label=org.opencontainers.image.title={{.ProjectName}}"
-      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
-      - "--label=org.opencontainers.image.version={{.Version}}"
-    skip_push: auto
+#   - image_templates:
+#       - "traves/linesense:{{ .Version }}-arm64"
+#       - "traves/linesense:latest-arm64"
+#     use: buildx
+#     goarch: arm64
+#     dockerfile: Dockerfile
+#     build_flag_templates:
+#       - "--platform=linux/arm64"
+#       - "--label=org.opencontainers.image.created={{.Date}}"
+#       - "--label=org.opencontainers.image.title={{.ProjectName}}"
+#       - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+#       - "--label=org.opencontainers.image.version={{.Version}}"
+#     skip_push: auto
 
-docker_manifests:
-  - name_template: traves/linesense:{{ .Version }}
-    image_templates:
-      - traves/linesense:{{ .Version }}-amd64
-      - traves/linesense:{{ .Version }}-arm64
-    skip_push: auto
+# docker_manifests:
+#   - name_template: traves/linesense:{{ .Version }}
+#     image_templates:
+#       - traves/linesense:{{ .Version }}-amd64
+#       - traves/linesense:{{ .Version }}-arm64
+#     skip_push: auto
 
-  - name_template: traves/linesense:latest
-    image_templates:
-      - traves/linesense:latest-amd64
-      - traves/linesense:latest-arm64
-    skip_push: auto
+#   - name_template: traves/linesense:latest
+#     image_templates:
+#       - traves/linesense:latest-amd64
+#       - traves/linesense:latest-arm64
+#     skip_push: auto
 
 # Announce releases (future)
 announce:
