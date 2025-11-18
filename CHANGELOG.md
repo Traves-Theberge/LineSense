@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.2] - 2025-11-18
+
+### Fixed
+- Fixed installation issue where non-interactive installs (e.g., via curl pipe) would fail when configuration files already existed.
+
 ## [0.6.1] - 2025-11-18
 
 ### Added

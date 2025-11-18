@@ -16,7 +16,7 @@ import (
 	"github.com/traves/linesense/internal/core"
 )
 
-const version = "0.6.1"
+const version = "0.6.2"
 
 func main() {
 	// Load LineSense .env file from config directory (secure location)
@@ -412,6 +412,13 @@ func runConfigInit() error {
 	providersPath := filepath.Join(configDir, "providers.toml")
 
 	if _, err := os.Stat(configPath); err == nil {
+		// Check for interactive terminal
+		fileInfo, _ := os.Stdin.Stat()
+		if (fileInfo.Mode() & os.ModeCharDevice) == 0 {
+			fmt.Println("⚠️  Configuration files already exist. Skipping overwrite (non-interactive mode).")
+			return nil
+		}
+
 		fmt.Println("⚠️  Configuration files already exist.")
 		fmt.Print("Do you want to overwrite them? (y/N): ")
 		var response string
