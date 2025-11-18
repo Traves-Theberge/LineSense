@@ -10,11 +10,11 @@ import (
 
 // ContextEnvelope is collected before each suggestion / explanation
 type ContextEnvelope struct {
-	Shell          string            `json:"shell"`           // "bash" | "zsh"
-	Line           string            `json:"line"`            // current input line
+	Shell          string            `json:"shell"` // "bash" | "zsh"
+	Line           string            `json:"line"`  // current input line
 	CWD            string            `json:"cwd"`
-	OS             string            `json:"os"`              // "linux" | "darwin" | "windows"
-	Distribution   string            `json:"distribution,omitempty"` // Linux distro: "ubuntu", "arch", "fedora", etc.
+	OS             string            `json:"os"`                        // "linux" | "darwin" | "windows"
+	Distribution   string            `json:"distribution,omitempty"`    // Linux distro: "ubuntu", "arch", "fedora", etc.
 	PackageManager string            `json:"package_manager,omitempty"` // "apt", "yum", "brew", "pacman", etc.
 	Git            *GitInfo          `json:"git,omitempty"`
 	Env            map[string]string `json:"env,omitempty"`     // filtered env (if enabled)
