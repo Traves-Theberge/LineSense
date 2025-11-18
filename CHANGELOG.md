@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.3] - 2025-11-18
+
+### Changed
+- Added `linesense --help` to the "Next steps" section in the installation script.
+
 ## [0.6.2] - 2025-11-18
 
 ### Fixed

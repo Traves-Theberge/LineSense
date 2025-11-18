@@ -16,7 +16,7 @@ import (
 	"github.com/traves/linesense/internal/core"
 )
 
-const version = "0.6.2"
+const version = "0.6.3"
 
 func main() {
 	// Load LineSense .env file from config directory (secure location)
