@@ -16,7 +16,7 @@ import (
 	"github.com/traves/linesense/internal/core"
 )
 
-const version = "0.6.0"
+const version = "0.6.1"
 
 func main() {
 	// Load LineSense .env file from config directory (secure location)
@@ -58,6 +58,8 @@ func run() error {
 		return runExplain(os.Args[2:])
 	case "config":
 		return runConfig(os.Args[2:])
+	case "update":
+		return runUpdate()
 	case "version", "--version", "-v":
 		fmt.Printf("linesense version %s\n", version)
 		return nil
@@ -77,6 +79,7 @@ Usage:
   linesense config [subcommand]  Configure LineSense
   linesense suggest [flags]      Generate command suggestions
   linesense explain [flags]      Explain a command
+  linesense update               Update LineSense to the latest version
   linesense version              Show version information
   linesense help                 Show this help message
 

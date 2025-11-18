@@ -246,7 +246,7 @@ print_next_steps() {
     echo -e "     ${BLUE}linesense suggest \"list files sorted by size\"${NC}"
     echo -e "     ${BLUE}linesense explain \"git rebase -i HEAD~3\"${NC}"
     echo ""
-    echo "  4. Use shell integration (Ctrl+Space for suggestions)"
+    echo "  4. Use shell integration (Ctrl+Space for suggestions & Ctrl+X for Explanation)"
     echo ""
     echo "  📚 Documentation: https://github.com/Traves-Theberge/LineSense"
     echo "  🐛 Report issues: https://github.com/Traves-Theberge/LineSense/issues"
