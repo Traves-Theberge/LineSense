@@ -6,6 +6,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/Masterminds/semver/v3"
 	"github.com/creativeprojects/go-selfupdate"
 )
 
@@ -41,26 +42,20 @@ func runUpdate() error {
 		return nil
 	}
 
-	// Check if latest version is newer than current
-	// latest.Version is a string in this library version? Or semver?
-	// The library uses Masterminds/semver, so it should be comparable.
-	// But let's check if we can compare.
-	// If latest.Version() is a string, we need to parse it.
-	// Actually, let's assume latest.Version() returns a string and we use the library's comparison if available.
-	// Or better, let's use the LessThan method if it's a semver object.
+	// Parse versions to compare
+	vCurrent, err := semver.NewVersion(version)
+	if err != nil {
+		return fmt.Errorf("failed to parse current version: %w", err)
+	}
 
-	// Let's try to use the library's built-in comparison if possible, or just compare strings if we are unsure.
-	// But wait, latest.Version() is a method? Or field?
-	// The error said "type func() string has no field or method LTE".
-	// So latest.Version is a method returning string?
-	// Let's check the error again: "latest.Version.LTE undefined (type func() string has no field or method LTE)"
-	// Wait, "type func() string"? No, "latest.Version" is likely a string or a method returning string.
+	vLatest, err := semver.NewVersion(latest.Version())
+	if err != nil {
+		return fmt.Errorf("failed to parse latest version: %w", err)
+	}
 
-	// Let's try to just print it for now and assume it's newer if found.
-	// Actually, DetectLatest usually returns the latest version regardless of current.
-
-	if latest.Version() == version || latest.Version() == "v"+version {
-		fmt.Printf("Current version %s is the latest\n", version)
+	// Check if latest version is actually newer than current
+	if !vLatest.GreaterThan(vCurrent) {
+		fmt.Printf("Current version %s is the latest (found %s)\n", version, latest.Version())
 		return nil
 	}
 
