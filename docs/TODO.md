@@ -9,13 +9,12 @@ Progress tracker for v1.0 release and beyond.
 - [x] Safety filter unit tests (17/17 passing)
 - [x] Shell integration test execution
   - [x] Run `./test_shell_integration.sh` and verify all pass
-  - [ ] Test bash integration manually
   - [ ] Test zsh integration manually
-- [ ] End-to-end test with real API
-  - [ ] Set up OPENROUTER_API_KEY
-  - [ ] Run `go test -v ./test_e2e.go`
-  - [ ] Verify suggest command works
-  - [ ] Verify explain command works
+- [x] End-to-end test with real API
+  - [x] Set up OPENROUTER_API_KEY
+  - [x] Run `go test -v ./test_e2e.go`
+  - [x] Verify suggest command works
+  - [x] Verify explain command works
 - [x] Additional unit tests (107 tests total, all passing ✓✓)
   - [x] Add tests for `internal/ai` module (66.1% coverage ✓)
   - [x] Add tests for `internal/config` module (84.8% coverage ✓)
@@ -176,7 +175,7 @@ Progress tracker for v1.0 release and beyond.
   - [ ] Show top 3-5 suggestions
   - [ ] Arrow key navigation
   - [ ] Preview mode
-  - [ ] Selection UI
+  - [ ] Selection UIho
 - [ ] Better error handling
   - [ ] Retry logic for API failures
   - [ ] Fallback suggestions

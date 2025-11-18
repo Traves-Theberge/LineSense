@@ -95,6 +95,18 @@ func buildSuggestUserPrompt(ctx *core.ContextEnvelope) string {
 		}
 	}
 
+	// Add project-specific context if available
+	if ctx.ProjectContext != "" {
+		parts = append(parts, "\nProject Context (.linesense_context):")
+		parts = append(parts, ctx.ProjectContext)
+	}
+
+	// Add global context if available
+	if ctx.GlobalContext != "" {
+		parts = append(parts, "\nGlobal Instructions (from config):")
+		parts = append(parts, ctx.GlobalContext)
+	}
+
 	parts = append(parts, "\nSuggest the complete command:")
 
 	return strings.Join(parts, "\n")

@@ -1,41 +1,101 @@
-# LineSense - Release Ready! 🚀
+# LineSense - Release Ready! 🚀# LineSense - Release Ready! 🚀
 
-> **Note:** This document was created for v0.3.0 release. Current version is v0.4.0.
-> This file is kept for historical reference.
 
-**Status:** ✅ READY FOR v0.3.0 RELEASE (COMPLETED)
-**Date:** November 14, 2025
 
-## Executive Summary
+> **Note:** This document was created for v0.6.0 release.> **Note:** This document was created for v0.6.0 release.
 
-LineSense has been thoroughly tested and is **production-ready** for release. All core functionality works correctly with real OpenRouter API integration, safety filters are operational, and the complete CI/CD infrastructure is in place.
+> This file is kept for historical reference.> This file is kept for historical reference.
 
-## What's Been Verified
 
-### ✅ Core Functionality (100% Tested)
 
-1. **Configuration Management**
-   - ✅ Config initialization (`linesense config init`)
-   - ✅ API key storage and masking
-   - ✅ Configuration display (`linesense config show`)
-   - ✅ XDG directory compliance
+**Status:** ✅ READY FOR v0.6.0 RELEASE (COMPLETED)**Status:** ✅ READY FOR v0.6.0 RELEASE (COMPLETED)
 
-2. **AI Integration (Real API Testing)**
-   - ✅ Simple suggestions: `list files sorted by size` → `ls -lhS`
-   - ✅ Complex suggestions: Git-aware context usage
-   - ✅ Command explanations with detailed notes
-   - ✅ Response time: < 3 seconds
+**Date:** November 18, 2025**Date:** November 18, 2025
+
+
+
+## Executive Summary## Executive Summary
+
+
+
+LineSense v0.6.0 introduces powerful context management features, allowing users to define both global and project-specific instructions for the AI. The installation experience has also been significantly improved.LineSense v0.6.0 introduces powerful context management features, allowing users to define both global and project-specific instructions for the AI. The installation experience has also been significantly improved.
+
+
+
+## What's New in v0.6.0## What's New in v0.6.0
+
+
+
+### ✅ Context Management### ✅ Context Management
+
+- **Global Instructions**: Users can now set global rules in `config.toml`- **Global Instructions**: Users can now set global rules in `config.toml`
+
+- **Project Context**: Support for `.linesense_context` files in project directories- **Project Context**: Support for `.linesense_context` files in project directories
+
+- **Prompt Engineering**: Context is intelligently injected into the AI prompt- **Prompt Engineering**: Context is intelligently injected into the AI prompt
+
+
+
+### ✅ User Experience### ✅ User Experience
+
+- **Beautiful Installer**: New ASCII banner and improved formatting in `install.sh`- **Beautiful Installer**: New ASCII banner and improved formatting in `install.sh`
+
+- **Documentation**: Comprehensive guides for new context features- **Documentation**: Comprehensive guides for new context features
+
+
+
+## What's Been Verified## What's Been Verified
+
+
+
+### ✅ Core Functionality (100% Tested)### ✅ Core Functionality (100% Tested)
+
+
+
+1. **Configuration Management**1. **Configuration Management**
+
+   - ✅ Config initialization (`linesense config init`)   - ✅ Config initialization (`linesense config init`)
+
+   - ✅ Global instructions loading   - ✅ API key storage and masking
+
+   - ✅ Project context loading   - ✅ Configuration display (`linesense config show`)
+
+   - ✅ API key storage and masking   - ✅ XDG directory compliance
+
+
+
+2. **AI Integration**2. **AI Integration (Real API Testing)**
+
+   - ✅ Global instructions are respected   - ✅ Simple suggestions: `list files sorted by size` → `ls -lhS`
+
+   - ✅ Project context is respected   - ✅ Complex suggestions: Git-aware context usage
+
+   - ✅ Command suggestions work with new context   - ✅ Command explanations with detailed notes
+
+   - ✅ Explanations work with new context   - ✅ Response time: < 3 seconds
+
    - ✅ JSON output formatting
 
-3. **Safety Filters (Critical)**
-   - ✅ `rm -rf /` → Risk: HIGH 🔴
-   - ✅ `dd if=/dev/zero of=/dev/sda` → Risk: HIGH 🔴
-   - ✅ Proper warnings and explanations
+3. **CLI Commands**
+
+   - ✅ `linesense config edit` works3. **Safety Filters (Critical)**
+
+   - ✅ `linesense config init-project` works   - ✅ `rm -rf /` → Risk: HIGH 🔴
+
+   - ✅ `linesense suggest` works   - ✅ `dd if=/dev/zero of=/dev/sda` → Risk: HIGH 🔴
+
+   - ✅ `linesense explain` works   - ✅ Proper warnings and explanations
+
    - ✅ No false positives in testing
 
-4. **Shell Integration**
-   - ✅ Bash script syntax validated
-   - ✅ Zsh script syntax validated
+4. **Installation**
+
+   - ✅ `install.sh` runs correctly4. **Shell Integration**
+
+   - ✅ Banner displays correctly   - ✅ Bash script syntax validated
+
+   - ✅ Shell integration installs correctly   - ✅ Zsh script syntax validated
+
    - ✅ Functions load correctly
    - ✅ Scripts copied to `~/.config/linesense/shell/`
    - ⏳ Interactive keybinding testing (pending manual test)

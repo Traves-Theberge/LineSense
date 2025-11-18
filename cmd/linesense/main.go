@@ -6,6 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 
@@ -15,7 +16,7 @@ import (
 	"github.com/traves/linesense/internal/core"
 )
 
-const version = "0.5.1"
+const version = "0.6.0"
 
 func main() {
 	// Load LineSense .env file from config directory (secure location)
@@ -81,8 +82,10 @@ Usage:
 
 Config Subcommands:
   init            Initialize configuration with interactive setup
+  init-project    Initialize project-specific context in current directory
   set-key         Set OpenRouter API key securely
   set-model       Change the default model
+  edit            Open configuration file in default editor
   show            Display current configuration
 
 Suggest Flags:
@@ -311,15 +314,83 @@ func runConfig(args []string) error {
 	switch subcommand {
 	case "init":
 		return runConfigInit()
+	case "init-project":
+		return runConfigInitProject()
 	case "set-key":
 		return runConfigSetKey(args[1:])
 	case "set-model":
 		return runConfigSetModel(args[1:])
+	case "edit":
+		return runConfigEdit()
 	case "show":
 		return runConfigShow()
 	default:
 		return fmt.Errorf("unknown config subcommand: %s", subcommand)
 	}
+}
+
+// runConfigEdit opens the config file in the default editor
+func runConfigEdit() error {
+	configDir := config.GetConfigDir()
+	configPath := filepath.Join(configDir, "config.toml")
+
+	editor := os.Getenv("EDITOR")
+	if editor == "" {
+		editor = "nano" // Fallback to nano
+		if _, err := os.Stat("/usr/bin/vim"); err == nil {
+			editor = "vim"
+		}
+		if _, err := os.Stat("/usr/bin/vi"); err == nil {
+			editor = "vi"
+		}
+	}
+
+	fmt.Printf("Opening global configuration %s in %s...\n", configPath, editor)
+
+	cmd := exec.Command(editor, configPath)
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	return cmd.Run()
+}
+
+// runConfigInitProject initializes a project-specific context file
+func runConfigInitProject() error {
+	cwd, err := os.Getwd()
+	if err != nil {
+		return fmt.Errorf("failed to get current directory: %w", err)
+	}
+
+	contextPath := filepath.Join(cwd, ".linesense_context")
+
+	if _, err := os.Stat(contextPath); err == nil {
+		fmt.Printf("⚠️  Project context file already exists at %s\n", contextPath)
+		fmt.Print("Do you want to overwrite it? (y/N): ")
+		var response string
+		_, _ = fmt.Scanln(&response)
+		if strings.ToLower(response) != "y" {
+			return fmt.Errorf("operation canceled")
+		}
+	}
+
+	content := `# LineSense Project Context
+# Add project-specific instructions here.
+# The AI will use this context when generating suggestions in this directory.
+
+# Example:
+# - Use 'npm run build' instead of 'make'
+# - The main branch is 'develop'
+# - Always run tests with '--race'
+`
+
+	if err := os.WriteFile(contextPath, []byte(content), 0644); err != nil {
+		return fmt.Errorf("failed to create project context file: %w", err)
+	}
+
+	fmt.Printf("✓ Created project-specific context file at %s\n", contextPath)
+	fmt.Println("  Edit this file to add project-specific instructions.")
+	return nil
 }
 
 // runConfigInit initializes configuration with interactive setup

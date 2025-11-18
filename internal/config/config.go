@@ -32,10 +32,11 @@ type KeybindingsConfig struct {
 
 // ContextConfig controls what context is gathered
 type ContextConfig struct {
-	HistoryLength int  `toml:"history_length"` // how many recent commands to use
-	IncludeGit    bool `toml:"include_git"`
-	IncludeFiles  bool `toml:"include_files"`
-	IncludeEnv    bool `toml:"include_env"`
+	HistoryLength      int    `toml:"history_length"` // how many recent commands to use
+	IncludeGit         bool   `toml:"include_git"`
+	IncludeFiles       bool   `toml:"include_files"`
+	IncludeEnv         bool   `toml:"include_env"`
+	GlobalInstructions string `toml:"global_instructions"` // User-defined global context/rules
 }
 
 // SafetyConfig defines safety rules

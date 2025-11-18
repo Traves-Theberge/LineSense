@@ -2,6 +2,7 @@ package core
 
 import (
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/traves/linesense/internal/config"
@@ -19,6 +20,8 @@ type ContextEnvelope struct {
 	Env            map[string]string `json:"env,omitempty"`     // filtered env (if enabled)
 	History        []HistoryEntry    `json:"history,omitempty"` // last N commands
 	UsageSummary   *UsageSummary     `json:"usage_summary,omitempty"`
+	ProjectContext string            `json:"project_context,omitempty"` // content of .linesense_context
+	GlobalContext  string            `json:"global_context,omitempty"`  // content from config.global_instructions
 }
 
 // GitInfo contains git repository information
@@ -73,6 +76,14 @@ func BuildContext(shell, line, cwd string, cfg *config.Config) (*ContextEnvelope
 	// Collect environment variables if enabled
 	if cfg.Context.IncludeEnv {
 		ctx.Env = collectFilteredEnv()
+	}
+
+	// Add global context from config
+	ctx.GlobalContext = cfg.Context.GlobalInstructions
+
+	// Check for project-specific context file
+	if content, err := os.ReadFile(filepath.Join(cwd, ".linesense_context")); err == nil {
+		ctx.ProjectContext = string(content)
 	}
 
 	// TODO: Build usage summary from usage log

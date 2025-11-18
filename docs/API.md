@@ -248,9 +248,8 @@ $ linesense explain --line "rm -rf /"
 
 Manage LineSense configuration.
 
-**Syntax:**
 ```bash
-linesense config <subcommand> [options]
+linesense config <subcommand> [args]
 ```
 
 **Subcommands:**
@@ -258,9 +257,33 @@ linesense config <subcommand> [options]
 | Subcommand | Description |
 |------------|-------------|
 | `init` | Initialize configuration with interactive setup |
+| `init-project` | Initialize project-specific context in current directory (NEW) |
 | `set-key` | Set OpenRouter API key securely |
 | `set-model` | Change the default model |
+| `edit` | Open global configuration file in default editor (NEW) |
 | `show` | Display current configuration |
+
+**Examples:**
+
+```bash
+# Initialize configuration
+linesense config init
+
+# Create a project context file in the current directory
+linesense config init-project
+
+# Set API key
+linesense config set-key sk-or-v1-...
+
+# Change model
+linesense config set-model openai/gpt-4o
+
+# Edit global config
+linesense config edit
+
+# Show current config
+linesense config show
+```
 
 #### config init
 
@@ -307,6 +330,48 @@ Configuration directory: /home/user/.config/linesense
 |------|---------|
 | `0` | Success - config initialized |
 | `1` | Error - cannot create directory or files |
+
+#### config init-project
+
+Initialize project-specific context.
+
+**Syntax:**
+```bash
+linesense config init-project
+```
+
+**Behavior:**
+1. Creates `linesense-project.toml` in current directory
+2. Sets up basic project structure
+3. Prompts for project details interactively
+4. Displays next steps
+
+**Example:**
+
+```bash
+$ linesense config init-project
+📂 LineSense Project Initialization
+===================================
+
+Project context file: /home/user/myproject/linesense-project.toml
+
+? What is the project name? MyProject
+? Describe the project: A sample project to demonstrate LineSense
+? Default shell type? (bash/zsh) bash
+
+✓ Created /home/user/myproject/linesense-project.toml
+
+📝 Next steps:
+- Edit project context: nano /home/user/myproject/linesense-project.toml
+- Add commands to history: linesense suggest --line "git init" --cwd /home/user/myproject
+```
+
+**Exit Codes:**
+
+| Code | Meaning |
+|------|---------|
+| `0` | Success - project initialized |
+| `1` | Error - cannot create file or invalid directory |
 
 #### config set-key
 
@@ -412,6 +477,34 @@ See [OpenRouter Models](https://openrouter.ai/models) for complete list.
 | `0` | Success - model updated |
 | `1` | Error - cannot write to config or invalid model |
 
+#### config edit
+
+Open global configuration file in default editor.
+
+**Syntax:**
+```bash
+linesense config edit
+```
+
+**Behavior:**
+1. Detects and opens the global config file (`~/.config/linesense/config.toml`) in the default text editor.
+2. Supports editor selection via `EDITOR` environment variable or falls back to `nano`/`vim`.
+3. Displays a message if the file is empty or not yet created.
+
+**Example:**
+
+```bash
+$ linesense config edit
+# Opens the config file in the default editor
+```
+
+**Exit Codes:**
+
+| Code | Meaning |
+|------|---------|
+| `0` | Success - editor opened |
+| `1` | Error - cannot determine editor or open file |
+
 #### config show
 
 Display current configuration.
@@ -510,8 +603,10 @@ Usage:
 
 Config Subcommands:
   init            Initialize configuration with interactive setup
+  init-project    Initialize project-specific context
   set-key         Set OpenRouter API key securely
   set-model       Change the default model
+  edit            Open global configuration file in default editor
   show            Display current configuration
 
 [... full help text ...]

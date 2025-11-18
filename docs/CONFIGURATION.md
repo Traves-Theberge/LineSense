@@ -49,33 +49,28 @@ provider_profile = "default"
 
 # Context Gathering Configuration
 [context]
-# Number of shell history entries to include in context
-# Higher values provide more context but increase API costs
-# Range: 0-1000, Recommended: 20-100
-history_length = 50
+# Number of recent commands to include in context
+history_length = 100
 
 # Include git repository information (branch, status, remotes)
-# Useful for git-related suggestions
 include_git = true
 
-# Include environment variables in context
-# Variables are filtered through env_allowlist for security
+# Include file listing (future feature)
+include_files = false
+
+# Include environment variables (filtered for safety)
 include_env = true
 
-# Which environment variables to include
-# Only these variables will be sent to the AI
-env_allowlist = [
-    "PATH",
-    "HOME",
-    "USER",
-    "SHELL",
-    "LANG",
-    "LC_ALL",
-    "EDITOR",
-    "VISUAL"
-]
+# Global Instructions (NEW in v0.6.0)
+# Define rules that apply to ALL suggestions, regardless of directory.
+# Useful for enforcing personal preferences or company standards.
+global_instructions = """
+- Always prefer 'bat' over 'cat'
+- Use 'podman' instead of 'docker'
+- When suggesting git commands, always include '--verbose'
+"""
 
-# Safety and Security Configuration
+# Safety Configuration
 [safety]
 # Enable safety filtering for commands
 # When true, commands are classified by risk level
@@ -490,7 +485,31 @@ timeout = 30  # Longer timeout for debugging
 
 ## Advanced Configuration
 
-### Multiple Profiles
+### Project-Specific Context (NEW in v0.6.0)
+
+You can define project-specific rules by creating a `.linesense_context` file in any directory. LineSense will automatically detect and use this file when you are working in that directory.
+
+**To create a project context file:**
+```bash
+linesense config init-project
+```
+
+**Example `.linesense_context` content:**
+```text
+This project uses a custom CLI tool called 'ops-cli'.
+- To build: ops-cli build --env=prod
+- To deploy: ops-cli deploy --region=us-east-1
+- Never use 'kubectl' directly, always use 'ops-cli k8s' wrapper.
+```
+
+**Precedence:**
+1. **Project Context** (`.linesense_context`) - Specific to the current directory
+2. **Global Instructions** (`config.toml`) - Applies everywhere
+3. **System Context** (OS, Shell, Git, History) - Automatically gathered
+
+The AI considers all of these, but specific instructions in the Project Context will typically override general Global Instructions if they conflict.
+
+### Custom AI Profiles
 
 Create multiple provider profiles for different use cases:
 

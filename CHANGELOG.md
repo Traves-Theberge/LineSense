@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.0] - 2025-11-18
+
+### Added
+- **Global Instructions** 🌍
+  - Define global rules in `config.toml` that apply to all suggestions
+  - Enforce personal preferences (e.g., "Always use bat instead of cat")
+  - Set company-wide standards (e.g., "Use podman instead of docker")
+- **Project-Specific Context** 📁
+  - Add a `.linesense_context` file to any directory
+  - Provide project-specific architectural details or custom CLI instructions
+  - AI automatically includes this context when working in that directory
+- **New CLI Commands** 🛠️
+  - `linesense config edit`: Quickly open your global config in your default editor
+  - `linesense config init-project`: Create a `.linesense_context` file in the current directory
+
+### Improved
+- **Installation Experience** ✨
+  - New, beautiful installation banner and clearer steps
+  - Improved visual feedback during setup
+
 ## [0.5.1] - 2025-11-15
 
 ### Security

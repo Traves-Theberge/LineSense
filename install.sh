@@ -17,6 +17,8 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
+CYAN='\033[0;36m'
+BOLD='\033[1m'
 NC='\033[0m' # No Color
 
 # Configuration
@@ -24,22 +26,39 @@ REPO_URL="https://github.com/Traves-Theberge/LineSense.git"
 INSTALL_DIR="${HOME}/.local/bin"
 CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/linesense"
 
+# Print banner
+print_banner() {
+    echo -e "${CYAN}"
+    echo "   __    _            ____                       "
+    echo "  / /   (_)_ __   ___/ ___|  ___ _ __  ___  ___  "
+    echo " / /    | | '_ \ / _ \___ \ / _ \ '_ \/ __|/ _ \ "
+    echo "/ /___  | | | | |  __/___) |  __/ | | \__ \  __/ "
+    echo "\____/  |_|_| |_|\___|____/ \___|_| |_|___/\___| "
+    echo -e "${NC}"
+    echo -e "${BOLD}AI-Powered Shell Assistant${NC}"
+    echo "----------------------------------------"
+}
+
 # Print colored messages
 info() {
-    echo -e "${BLUE}[INFO]${NC} $1"
+    echo -e "${BLUE}ℹ️  [INFO]${NC} $1"
 }
 
 success() {
-    echo -e "${GREEN}[SUCCESS]${NC} $1"
+    echo -e "${GREEN}✅ [SUCCESS]${NC} $1"
 }
 
 warn() {
-    echo -e "${YELLOW}[WARN]${NC} $1"
+    echo -e "${YELLOW}⚠️  [WARN]${NC} $1"
 }
 
 error() {
-    echo -e "${RED}[ERROR]${NC} $1"
+    echo -e "${RED}❌ [ERROR]${NC} $1"
     exit 1
+}
+
+step() {
+    echo -e "\n${BOLD}👉 $1${NC}"
 }
 
 # Check if command exists
@@ -82,7 +101,7 @@ get_shell_rc() {
 
 # Check prerequisites
 check_prerequisites() {
-    info "Checking prerequisites..."
+    step "Checking prerequisites..."
 
     # Check for Go
     if ! command_exists go; then
@@ -244,16 +263,7 @@ cleanup() {
 
 # Main installation flow
 main() {
-    echo ""
-    echo -e "${BLUE}"
-    cat << "EOF"
-    ▖ ▘    ▄▖
-    ▌ ▌▛▌█▌▚ █▌▛▌▛▘█▌
-    ▙▖▌▌▌▙▖▄▌▙▖▌▌▄▌▙▖
-
-EOF
-    echo -e "    ${GREEN}AI-powered shell command suggestions & explanations${NC}"
-    echo ""
+    print_banner
 
     # Set trap for cleanup
     trap cleanup EXIT
