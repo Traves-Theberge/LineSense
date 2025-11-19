@@ -8,7 +8,7 @@
 \____/ |_|_| |_|\___|____/ \___|_| |_|___/\___| 
 ```
 
-**AI-Powered Shell Assistant** (v0.6.5)
+**AI-Powered Shell Assistant** (v0.6.6)
 
 [![CI](https://github.com/Traves-Theberge/LineSense/workflows/CI/badge.svg)](https://github.com/Traves-Theberge/LineSense/actions)
 [![Tests](https://img.shields.io/badge/tests-107%20passing-success)](.)
