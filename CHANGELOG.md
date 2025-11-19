@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.6] - 2025-11-18
+
+### Bug Fixes
+
+- Fix asset naming convention to be compatible with `go-selfupdate` (lowercase OS, amd64 instead of x86_64). This ensures the `update` command can correctly detect and install new versions.
+
 ## [0.6.5] - 2025-11-18
 
 ### Fixed
