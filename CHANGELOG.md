@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.5] - 2025-11-18
+
+### Fixed
+- Removed 32-bit ARM build support to resolve integer overflow compilation errors in dependencies.
+
 ## [0.6.4] - 2025-11-18
 
 ### Fixed
